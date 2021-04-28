@@ -13,7 +13,7 @@ import data.*;
 
 /**
  * @author Kirill Vorobyev
- * @version 1.1
+ * @version 1.2
  * Class which realised user`s commands
  */
 public class CollectionManagement {
@@ -32,79 +32,74 @@ public class CollectionManagement {
 
         // Making a manual
         infoCommands = new HashMap<>();
-        infoCommands.put("Help", " - Display help for available commands");
+        infoCommands.put("help", " - Display help for available commands");
         infoCommands.put("info", " - Output collection information to the standard output stream");
         infoCommands.put("show", " - Output all elements of the collection in a string representation to the standard output stream");
-        infoCommands.put("insert null {element}", " - Add a new element with the specified key");
-        infoCommands.put("update id {element}", " - Update the value of a collection element whose id is equal to the specified one");
-        infoCommands.put("remove_key null", " - Delete an item from the collection by its key");
+        infoCommands.put("insert number_of_key", " - Add a new element with the specified key");
+        infoCommands.put("update id", " - Update the value of a collection element whose id is equal to the specified one");
+        infoCommands.put("remove_key number_of_key", " - Delete an item from the collection by its key");
         infoCommands.put("clear", " - Clear the collection");
         infoCommands.put("save", " - Save the collection to a file");
         infoCommands.put("execute_script file_name", " - Read and execute the script from the specified file");
         infoCommands.put("exit", " - End the program");
-        infoCommands.put("remove_greater {element}", " - Remove all items from the collection that exceed the specified limit");
-        infoCommands.put("replace_if_greater null {element}", " - Replace the value by key if the new value is greater than the old one");
-        infoCommands.put("remove_greater_key null", " - Remove all items from the collection whose key exceeds the specified value");
-        infoCommands.put("group_counting_by_category", " - Group the collection items by the category field value, output the number of items in each group");
-        infoCommands.put("filter_by_chapter chapter", " - Output elements whose chapter field value is equal to the specified value");
+        infoCommands.put("remove_greater value_of_health", " - Remove all items from the collection that exceed the specified limit");
+        infoCommands.put("replace_if_greater value_of_health", " - Replace the value by key if the new value is greater than the old one");
+        infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key exceeds the specified value");
+        infoCommands.put("group_counting_by_coordinates", " - Group the collection items by the coordinates field value, output the number of items in each group");
+        infoCommands.put("filter_by_chapter", " - Output elements whose chapter field value is equal to the specified value");
         infoCommands.put("filter_starts_with_name name", " - Output elements whose name field value starts with the specified substring");
     }
 
     /** Constructor for checking a path to file existence and file readiness to work */
     public CollectionManagement(String pathToXML) {
-        Scanner scanner = new Scanner(System.in);
         try {
-            for ( ; ; ) {
-                System.out.print("Enter a full path to XML file with collection: ");
-                if (checkFile(pathToXML)) {
-                    try {
-                        final QName qName = new QName("spaceMarine");
-                        InputStream inputStream = new FileInputStream(pathToXML);
-                        // Create xml event reader for input stream
-                        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-                        XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
-                        // Initialize jaxb
-                        JAXBContext context = JAXBContext.newInstance(SpaceMarine.class);
-                        Unmarshaller unmarshaller = context.createUnmarshaller();
-                        XMLEvent e;
-                        // Field for counting amount of downloaded elements
-                        int goodElements = 0;
-                        int badElements = 0;
-                        // Loop for unmarshalling the collection
-                        while ((e = xmlEventReader.peek()) != null) {
-                            // Check the event is a Document start element
-                            if (e.isStartElement() && ((StartElement) e).getName().equals(qName)) {
-                                // Unmarshall the document
-                                SpaceMarine unmarshalledSpaceMarine = unmarshaller.unmarshal(xmlEventReader, SpaceMarine.class).getValue();
-                                Coordinates newCoordinates = unmarshalledSpaceMarine.getCoordinates();
-                                Chapter newChapter = unmarshalledSpaceMarine.getChapter();
-                                if (unmarshalledSpaceMarine.getId() > 0 && !unmarshalledSpaceMarine.getName().equals(null) &&
-                                        !newCoordinates.getYCord().equals(null) && !unmarshalledSpaceMarine.getCreationDate().equals(null) &&
-                                        (unmarshalledSpaceMarine.getHealth() > 0 || unmarshalledSpaceMarine.getHealth().equals(null)) &&
-                                        !newChapter.getChapterName().equals(null) && !newChapter.getChapterWorld().equals(null)) {
-                                    spaceMarines.put(1,unmarshalledSpaceMarine);
-                                    goodElements += 1;
-                                } else badElements += 1;
-                            } else {
-                                xmlEventReader.next();
-                            }
+            if (checkFile(pathToXML)) {
+                try {
+                    final QName qName = new QName("spaceMarine");
+                    InputStream inputStream = new FileInputStream(pathToXML);
+                    // Create xml event reader for input stream
+                    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+                    XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
+                    // Initialize jaxb
+                    JAXBContext context = JAXBContext.newInstance(SpaceMarine.class);
+                    Unmarshaller unmarshaller = context.createUnmarshaller();
+                    XMLEvent e;
+                    // Field for counting amount of downloaded elements
+                    int goodElements = 0;
+                    int badElements = 0;
+                    // Loop for unmarshalling the collection
+                    while ((e = xmlEventReader.peek()) != null) {
+                        // Check the event is a Document start element
+                        if (e.isStartElement() && ((StartElement) e).getName().equals(qName)) {
+                            // Unmarshall the document
+                            SpaceMarine unmarshalledSpaceMarine = unmarshaller.unmarshal(xmlEventReader, SpaceMarine.class).getValue();
+                            Coordinates newCoordinates = unmarshalledSpaceMarine.getCoordinates();
+                            Chapter newChapter = unmarshalledSpaceMarine.getChapter();
+                            if (unmarshalledSpaceMarine.getId() > 0 && !spaceMarines.containsKey(unmarshalledSpaceMarine.getId()) && !unmarshalledSpaceMarine.getName().equals(null) &&
+                                    !newCoordinates.getYCord().equals(null) && !unmarshalledSpaceMarine.getCreationDate().equals(null) &&
+                                    (unmarshalledSpaceMarine.getHealth() > 0 || unmarshalledSpaceMarine.getHealth().equals(null)) &&
+                                    !newChapter.getChapterName().equals(null) && !newChapter.getChapterWorld().equals(null)) {
+                                spaceMarines.put(makeKey(),unmarshalledSpaceMarine);
+                                goodElements += 1;
+                            } else badElements += 1;
+                        } else {
+                            xmlEventReader.next();
                         }
-                        System.out.println("Collection was loaded successfully. " +
-                                "\n" + goodElements + " elements has been loaded." +
-                                "\n" + badElements + " elements were not loaded because these values are incorrect.");
-                        xmlFile = new File(pathToXML);
-                        initializationDate = LocalDateTime.now();
-                        break;
-                    } catch (JAXBException jaxbException) {
-                        System.out.println("Violated XML syntax. Check the file and Try again.");
-                    } catch (FileNotFoundException fileNotFoundException) {
-                        System.out.println("File not found.");
-                    } catch (XMLStreamException xmlStreamException) {
-                        System.out.println("File has not structure of XML file. This condition is necessary.");
-                        System.out.println("Please write path to correct XML file.");
                     }
-                } else System.out.println("Try again.");
-            }
+                    System.out.println("Collection was loaded successfully. " +
+                            "\n" + goodElements + " elements has been loaded." +
+                            "\n" + badElements + " elements were not loaded because these values are incorrect.");
+                    xmlFile = new File(pathToXML);
+                    initializationDate = LocalDateTime.now();
+                } catch (JAXBException jaxbException) {
+                    System.out.println("Violated XML syntax. Check the file and Try again.");
+                } catch (FileNotFoundException fileNotFoundException) {
+                    System.out.println("File not found.");
+                } catch (XMLStreamException xmlStreamException) {
+                    System.out.println("File has not structure of XML file. This condition is necessary.");
+                    System.out.println("Please write path to correct XML file.");
+                }
+            } else System.out.println("Try again.");
         } catch (NoSuchElementException noSuchElementException) {
             System.out.println("You clicked shortcut for finishing a program.");
             System.exit(0);
@@ -153,7 +148,6 @@ public class CollectionManagement {
                 System.out.print(entry.getKey() + " ");
                 System.out.print(entry.getValue());
             }
-            System.out.println("\n");
         } else {
             System.out.println("Collection is empty");
         }
@@ -187,11 +181,25 @@ public class CollectionManagement {
     public int makeId() {
         int maxId = 0;
         for (Map.Entry<Integer, SpaceMarine> marines : spaceMarines.entrySet()) {
-            if (marines.getKey() > maxId) {
-                maxId = marines.getKey();
+            if (marines.getValue().getId() > maxId) {
+                maxId = marines.getValue().getId();
             }
         }
         return maxId + 1;
+    }
+
+    /**
+     * Method for receiving key of element
+     * @return Integer key
+     */
+    public int makeKey() {
+        int maxKey = 0;
+        for (Map.Entry<Integer,SpaceMarine> marines : spaceMarines.entrySet()) {
+            if (marines.getKey() > maxKey) {
+                maxKey = marines.getKey();
+            }
+        }
+        return maxKey + 1;
     }
 
     /**
@@ -567,7 +575,7 @@ public class CollectionManagement {
                             removeGreaterKey(cleanUserCommand[1]);
                             break;
                         case "group_counting_by_category":
-                            groupCountingByCategory();
+                            groupCountingByCoordinates();
                             break;
                         case "filter_by_chapter":
                             filterByChapter(scanChapter());
@@ -672,30 +680,21 @@ public class CollectionManagement {
         }
     }
 
-    /** Method for counting amount and grouping elements by it's category */
-    public void groupCountingByCategory() {
-        int assault = 0;
-        int tactical = 0;
-        int chaplain = 0;
+    /** Method for counting amount and grouping elements by it's coordinates */
+    public void groupCountingByCoordinates() {
+        Map<String, Integer> cords = new HashMap<>();
         for (SpaceMarine spaceMarine : spaceMarines.values()) {
-            switch (spaceMarine.getCategory()) {
-                case ASSAULT:
-                    assault += 1;
-                    break;
-                case TACTICAL:
-                    tactical += 1;
-                    break;
-                case CHAPLAIN:
-                    chaplain += 1;
-                    break;
+            if (cords.containsKey(spaceMarine.getCoordinates().toString())) {
+                cords.put(spaceMarine.getCoordinates().toString(),cords.get(spaceMarine.getCoordinates().toString()) + 1 );
+            } else {
+                cords.put(spaceMarine.getCoordinates().toString(), 1);
             }
         }
-        System.out.println("Elements of this collection were grouped by Category.");
-        System.out.println("First group: Assault. Amount of elements: " + assault);
-        System.out.println("Second group: Tactical. Amount of elements: " + tactical);
-        System.out.println("Third group: Chaplain. Amount of elements: " + chaplain);
+        for (Map.Entry<String, Integer> cord : cords.entrySet()) {
+            System.out.print("Elements with coordinates " + cord.getKey() + " : ");
+            System.out.print(cord.getValue() + "\n");
+        }
     }
-
     /** Method for printing elements whose chapter field value is equal to it's value of chapter */
     public void filterByChapter(Chapter chapter) {
         boolean check = false;
