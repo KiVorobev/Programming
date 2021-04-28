@@ -133,13 +133,14 @@ public class SpaceMarine {
         return "SpaceMarine{" +
                 "\nid = " + id +
                 "\nname = " + name +
-                "\n" + coordinates +
+                "\ncoordinates " + coordinates +
                 "\ncreationDate = " + creationDate +
                 "\nhealth = " + health +
                 "\ncategory = " + category +
                 "\nweaponType = " + weaponType +
                 "\nmeleeWeapon = " + meleeWeapon +
                 "\n" + chapter +
-                "\n}";
+                "\n}" +
+                "\n";
     }
 }
