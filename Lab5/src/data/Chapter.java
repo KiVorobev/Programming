@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Kirill Vorobyev
- * @version 1.1
+ * @version 1.2
  * Class for describing chapter of element
  */
 @XmlType(name = "chapter")
