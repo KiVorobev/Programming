@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <spaceMarines>
     <spaceMarine>
-        <id>50</id>
-        <name>joke</name>
+        <id>1</id>
+        <name>Lol</name>
         <coordinates>
             <xCord>23</xCord>
             <yCord>32</yCord>
@@ -15,6 +15,23 @@
         <chapter>
             <chapterName>kol</chapterName>
             <chapterWorld>lock</chapterWorld>
+        </chapter>
+    </spaceMarine>
+    <spaceMarine>
+        <id>2</id>
+        <name>hjk</name>
+        <coordinates>
+            <xCord>23</xCord>
+            <yCord>32</yCord>
+        </coordinates>
+        <creationDate>2021-04-28T20:41:09.542</creationDate>
+        <health>78</health>
+        <category>ASSAULT</category>
+        <weaponType>BOLTGUN</weaponType>
+        <meleeWeapon>CHAIN_AXE</meleeWeapon>
+        <chapter>
+            <chapterName>ghjk</chapterName>
+            <chapterWorld>yui</chapterWorld>
         </chapter>
     </spaceMarine>
 </spaceMarines>
