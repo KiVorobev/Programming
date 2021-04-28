@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Kirill Vorobyev
- * @version 1.1
+ * @version 1.2
  * Class for describing coordinates of element
  */
 @XmlType (name = "coordinates")
@@ -44,7 +44,7 @@ public class Coordinates {
     /** Method for printing this field into a string representation */
     @Override
     public String toString(){
-        return "coordinates { x = " + xCord + ", y = " + yCord + " }";
+        return "{ x = " + xCord + ", y = " + yCord + " }";
     }
 
     /** Default constructor */
