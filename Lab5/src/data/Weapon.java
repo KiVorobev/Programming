@@ -2,7 +2,7 @@ package data;
 
 /**
  * @author Kirill Vorobyev
- * @version 1.1
+ * @version 1.2
  * Enum class for describing weapon of element
  */
 public enum Weapon {
