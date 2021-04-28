@@ -2,7 +2,7 @@ public class Main {
     /**
      * Main class for starting a program
      * @author Kirill Vorobyev
-     * @version 1.1
+     * @version 1.2
      * @param args - args for program successfully working
      */
     public static void main(String[] args) {
