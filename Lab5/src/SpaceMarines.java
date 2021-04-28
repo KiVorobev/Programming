@@ -7,7 +7,7 @@ import data.*;
 
     /**
      * @author Kirill Vorobyev
-     * @version 1.1
+     * @version 1.2
      * Class for describing a collection in a marshaling-ready view
      */
 
