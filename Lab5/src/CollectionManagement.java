@@ -93,11 +93,14 @@ public class CollectionManagement {
                     initializationDate = LocalDateTime.now();
                 } catch (JAXBException jaxbException) {
                     System.out.println("Violated XML syntax. Check the file and Try again.");
+                    System.exit(0);
                 } catch (FileNotFoundException fileNotFoundException) {
                     System.out.println("File not found.");
+                    System.exit(0);
                 } catch (XMLStreamException xmlStreamException) {
                     System.out.println("File has not structure of XML file. This condition is necessary.");
                     System.out.println("Please write path to correct XML file.");
+                    System.exit(0);
                 }
             } else System.out.println("Try again.");
         } catch (NoSuchElementException noSuchElementException) {
