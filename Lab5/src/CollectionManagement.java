@@ -701,6 +701,7 @@ public class CollectionManagement {
             System.out.print(cord.getValue() + "\n");
         }
     }
+
     /** Method for printing elements whose chapter field value is equal to it's value of chapter */
     public void filterByChapter(Chapter chapter) {
         boolean check = false;
