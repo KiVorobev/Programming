@@ -102,7 +102,10 @@ public class CollectionManagement {
                     System.out.println("Please write path to correct XML file.");
                     System.exit(0);
                 }
-            } else System.out.println("Try again.");
+            } else {
+                System.out.println("Try again.");
+                System.exit(0);
+            }
         } catch (NoSuchElementException noSuchElementException) {
             System.out.println("You clicked shortcut for finishing a program.");
             System.exit(0);
