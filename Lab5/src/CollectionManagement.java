@@ -27,6 +27,8 @@ public class CollectionManagement {
     /** Field used for saving collection into xml file */
     private File xmlFile;
 
+    boolean needToClear = false;
+
     {
         initializationDate = java.time.LocalDateTime.now();
 
@@ -51,7 +53,7 @@ public class CollectionManagement {
     }
 
     /** Constructor for checking a path to file existence and file readiness to work */
-    public CollectionManagement(String pathToXML) {
+    public CollectionManagement(String pathToXML) throws IOException {
         try {
             if (checkFile(pathToXML)) {
                 try {
@@ -75,7 +77,7 @@ public class CollectionManagement {
                             SpaceMarine unmarshalledSpaceMarine = unmarshaller.unmarshal(xmlEventReader, SpaceMarine.class).getValue();
                             Coordinates newCoordinates = unmarshalledSpaceMarine.getCoordinates();
                             Chapter newChapter = unmarshalledSpaceMarine.getChapter();
-                            if (unmarshalledSpaceMarine.getId() > 0 && !spaceMarines.containsKey(unmarshalledSpaceMarine.getId()) && !unmarshalledSpaceMarine.getName().equals(null) &&
+                            if (unmarshalledSpaceMarine.getId() > 0 && !spaceMarines.containsValue(unmarshalledSpaceMarine.getId()) && !unmarshalledSpaceMarine.getName().equals(null) &&
                                     !newCoordinates.getYCord().equals(null) && !unmarshalledSpaceMarine.getCreationDate().equals(null) &&
                                     (unmarshalledSpaceMarine.getHealth() > 0 || unmarshalledSpaceMarine.getHealth().equals(null)) &&
                                     !newChapter.getChapterName().equals(null) && !newChapter.getChapterWorld().equals(null)) {
@@ -98,9 +100,10 @@ public class CollectionManagement {
                     System.out.println("File not found.");
                     System.exit(0);
                 } catch (XMLStreamException xmlStreamException) {
-                    System.out.println("File has not structure of XML file. This condition is necessary.");
-                    System.out.println("Please write path to correct XML file.");
-                    System.exit(0);
+                    xmlFile = new File (pathToXML);
+                    needToClear = true;
+                    System.out.println("Collection was loaded successfully.");
+                    System.out.println("Collection is empty.");
                 }
             } else {
                 System.out.println("Try again.");
@@ -163,7 +166,12 @@ public class CollectionManagement {
     public void insert(String in) {
         boolean check = false;
         try {
-            int key = Integer.parseInt(in);
+            int key;
+            if (in.indexOf(" ") > 0) {
+                key = Integer.parseInt(in.substring(0, in.indexOf(" ")));
+            } else {
+                key = Integer.parseInt(in);
+            }
             for (int keys : spaceMarines.keySet()) {
                 if (key == keys) {
                     System.out.println("Such key already exists. Try again.");
@@ -467,20 +475,26 @@ public class CollectionManagement {
     /** Method for updating the element by it's ID */
     public void update(String in) {
         try {
-            int id = Integer.parseInt(in);
+            int id;
+            if (in.indexOf(" ") > 0) {
+                id = Integer.parseInt(in.substring(0, in.indexOf(" ")));
+            } else {
+                id = Integer.parseInt(in);
+            }
+            System.out.println(id);
             boolean check = false;
             for (SpaceMarine spaceMarine : spaceMarines.values()) {
                 if (id == spaceMarine.getId()) {
                     spaceMarine.setName(scanName());
                     check = true;
+                }
             }
-        }
-        if (!check) {
-            System.out.println("An element with this id does not exist.");
-        } else {
-            System.out.println("Name of element updated successfully.");
-        }
-    } catch (NumberFormatException numberFormatException) {
+            if (!check) {
+                System.out.println("An element with this id does not exist.");
+            } else {
+                System.out.println("Name of element updated successfully.");
+            }
+        } catch (NumberFormatException numberFormatException) {
             System.out.println("As an argument you need to enter a number.");
         }
     }
@@ -488,7 +502,12 @@ public class CollectionManagement {
     /** Method for deleting element in the collection by it's key */
     public void removeKey(String in) {
         try {
-            int key = Integer.parseInt(in);
+            int key;
+            if (in.indexOf(" ") > 0) {
+                key = Integer.parseInt(in.substring(0, in.indexOf(" ")));
+            } else {
+                key = Integer.parseInt(in);
+            }
             boolean check = false;
             for (Map.Entry<Integer, SpaceMarine> entry : spaceMarines.entrySet()) {
                 if (entry.getKey().equals(key)) {
@@ -509,13 +528,20 @@ public class CollectionManagement {
     /** Method for deleting all elements in the collection */
     public void clear() {
         spaceMarines.clear();
-        System.out.print("Collection cleared.");
+        System.out.println("Collection cleared.");
         save();
     }
 
     /** Method for saving (marshaling) java collection to XML-file */
     public void save() {
         try {
+            if (needToClear && xmlFile.length() == 0) {
+                // Creation object FileWriter
+                FileWriter writer = new FileWriter(xmlFile);
+                writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "\n" );
+                writer.flush();
+                writer.close();
+            }
             SpaceMarines newSpaceMarines = new SpaceMarines();
             newSpaceMarines.setSpaceMarines(new ArrayList<>(spaceMarines.values()));
             JAXBContext context = JAXBContext.newInstance(SpaceMarines.class);
@@ -524,8 +550,11 @@ public class CollectionManagement {
             //Marshal the persons list in file
             marshaller.marshal(newSpaceMarines, xmlFile);
             System.out.println("Collection saved successfully");
+            needToClear = false;
         } catch (JAXBException jaxbException) {
             System.out.println("Violated XML syntax. Check the file and Try again.");
+        } catch (IOException ioException) {
+            System.out.println("XML File does not exist.");
         }
     }
 
@@ -635,7 +664,12 @@ public class CollectionManagement {
     /** Method for update health field if entered health more than it's health */
     public void replaceIfGreater(String in) {
         try {
-            int key = Integer.parseInt(in);
+            int key;
+            if (in.indexOf(" ") > 0) {
+                key = Integer.parseInt(in.substring(0, in.indexOf(" ")));
+            } else {
+                key = Integer.parseInt(in);
+            }
             boolean check = false;
             for (Map.Entry<Integer, SpaceMarine> entry : spaceMarines.entrySet()) {
                 if (key == entry.getKey()) {
@@ -664,7 +698,12 @@ public class CollectionManagement {
     /** Method for removing elements from collection if it`s value of key more than entered value */
     public void removeGreaterKey(String in) {
         try {
-            int key = Integer.parseInt(in);
+            int key;
+            if (in.indexOf(" ") > 0) {
+                key = Integer.parseInt(in.substring(0, in.indexOf(" ")));
+            } else {
+                key = Integer.parseInt(in);
+            }
             int check = 0;
             for (Map.Entry<Integer, SpaceMarine> entry : spaceMarines.entrySet()) {
                 if (key < entry.getKey()) {
@@ -706,7 +745,8 @@ public class CollectionManagement {
     public void filterByChapter(Chapter chapter) {
         boolean check = false;
         for (SpaceMarine spaceMarine : spaceMarines.values()) {
-            if (spaceMarine.getChapter().getChapterName().equals(chapter.getChapterName()) && spaceMarine.getChapter().getChapterWorld().equals(chapter.getChapterWorld())) {
+            if (spaceMarine.getChapter().getChapterName().equals(chapter.getChapterName()) &&
+                    spaceMarine.getChapter().getChapterWorld().equals(chapter.getChapterWorld())) {
                 System.out.println(spaceMarine);
                 check = true;
             }
