@@ -26,7 +26,7 @@ public class CollectionManagement {
     private HashMap<String, String> infoCommands;
     /** Field used for saving collection into xml file */
     private File xmlFile;
-
+    /** Field used to determine the starting state of the file */
     boolean needToClear = false;
 
     {
