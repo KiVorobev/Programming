@@ -1,4 +1,5 @@
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -14,25 +15,26 @@ import data.*;
     @XmlRootElement (name = "spaceMarines")
     @XmlAccessorType (XmlAccessType.NONE)
     public class SpaceMarines {
+
         /**
          * Field persons - map for keeping collection
          */
         @XmlElement (name = "spaceMarine")
-        private List<SpaceMarine> spaceMarines = null;
+        private Map<Integer, SpaceMarine> spaceMarine = new HashMap<Integer, SpaceMarine>();
 
         /**
          * Method for get spaceMarines map
          *
          * @return Map<Integer, SpaceMarine> spaceMarines
          */
-        public List<SpaceMarine> getSpaceMarines() {
-            return spaceMarines;
+        public Map<Integer, SpaceMarine> getSpaceMarines() {
+            return spaceMarine;
         }
 
         /**
          * Method for passing a value to the spaceMarines hashmap
          */
-        public void setSpaceMarines(List<SpaceMarine> spaceMarines) {
-            this.spaceMarines = spaceMarines;
+        public void setSpaceMarines(Map<Integer, SpaceMarine> spaceMarines) {
+            this.spaceMarine = spaceMarines;
         }
     }
