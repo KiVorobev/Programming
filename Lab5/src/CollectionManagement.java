@@ -48,7 +48,7 @@ public class CollectionManagement {
         infoCommands.put("replace_if_greater value_of_health", " - Replace the value by key if the new value is greater than the old one");
         infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key exceeds the specified value");
         infoCommands.put("group_counting_by_coordinates", " - Group the collection items by the coordinates field value, output the number of items in each group");
-        infoCommands.put("filter_by_chapter", " - Output elements whose chapter field value is equal to the specified value");
+        infoCommands.put("filter_by_chapter chapter_name", " - Output elements whose chapter field value is equal to the specified value");
         infoCommands.put("filter_starts_with_name name", " - Output elements whose name field value starts with the specified substring");
     }
 
@@ -57,13 +57,14 @@ public class CollectionManagement {
         try {
             if (checkFile(pathToXML)) {
                 try {
-                    final QName qName = new QName("spaceMarine");
+                    final QName qName = new QName("spaceMarines");
                     InputStream inputStream = new FileInputStream(pathToXML);
+                    xmlFile = new File(pathToXML);
                     // Create xml event reader for input stream
                     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
                     XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
                     // Initialize jaxb
-                    JAXBContext context = JAXBContext.newInstance(SpaceMarine.class);
+                    JAXBContext context = JAXBContext.newInstance(SpaceMarines.class);
                     Unmarshaller unmarshaller = context.createUnmarshaller();
                     XMLEvent e;
                     // Field for counting amount of downloaded elements
@@ -74,16 +75,31 @@ public class CollectionManagement {
                         // Check the event is a Document start element
                         if (e.isStartElement() && ((StartElement) e).getName().equals(qName)) {
                             // Unmarshall the document
-                            SpaceMarine unmarshalledSpaceMarine = unmarshaller.unmarshal(xmlEventReader, SpaceMarine.class).getValue();
-                            Coordinates newCoordinates = unmarshalledSpaceMarine.getCoordinates();
-                            Chapter newChapter = unmarshalledSpaceMarine.getChapter();
-                            if (unmarshalledSpaceMarine.getId() > 0 && !spaceMarines.containsValue(unmarshalledSpaceMarine.getId()) && !unmarshalledSpaceMarine.getName().equals(null) &&
-                                    !newCoordinates.getYCord().equals(null) && !unmarshalledSpaceMarine.getCreationDate().equals(null) &&
-                                    (unmarshalledSpaceMarine.getHealth() > 0 || unmarshalledSpaceMarine.getHealth().equals(null)) &&
-                                    !newChapter.getChapterName().equals(null) && !newChapter.getChapterWorld().equals(null)) {
-                                spaceMarines.put(makeKey(),unmarshalledSpaceMarine);
-                                goodElements += 1;
-                            } else badElements += 1;
+                            SpaceMarines unmarshalledSpaceMarine = unmarshaller.unmarshal(xmlEventReader, SpaceMarines.class).getValue();
+                            boolean needToCheck;
+                            for (Map.Entry<Integer, SpaceMarine> entry : unmarshalledSpaceMarine.getSpaceMarines().entrySet()) {
+                                needToCheck = true;
+                                for (SpaceMarine spaceMarine : spaceMarines.values()) {
+                                    if (spaceMarine.getId() == entry.getValue().getId()) {
+                                        badElements += 1;
+                                        needToCheck = false;
+                                    }
+                                }
+                                if (needToCheck) {
+                                    if (!spaceMarines.containsKey(entry.getKey()) &&
+                                            entry.getValue().getId() > 0 &&
+                                            !spaceMarines.containsValue(entry.getValue().getId()) &&
+                                            !entry.getValue().getName().equals(null) &&
+                                            !entry.getValue().getCoordinates().getYCord().equals(null) &&
+                                            !entry.getValue().getCreationDate().equals(null) &&
+                                            (entry.getValue().getHealth() > 0 || entry.getValue().getHealth().equals(null)) &&
+                                            !entry.getValue().getChapter().getChapterName().equals(null) &&
+                                            !entry.getValue().getChapter().getChapterWorld().equals(null)) {
+                                        spaceMarines.put(entry.getKey(), entry.getValue());
+                                        goodElements += 1;
+                                    } else badElements += 1;
+                                }
+                            }
                         } else {
                             xmlEventReader.next();
                         }
@@ -200,20 +216,6 @@ public class CollectionManagement {
             }
         }
         return maxId + 1;
-    }
-
-    /**
-     * Method for receiving key of element
-     * @return Integer key
-     */
-    public int makeKey() {
-        int maxKey = 0;
-        for (Map.Entry<Integer,SpaceMarine> marines : spaceMarines.entrySet()) {
-            if (marines.getKey() > maxKey) {
-                maxKey = marines.getKey();
-            }
-        }
-        return maxKey + 1;
     }
 
     /**
@@ -543,7 +545,7 @@ public class CollectionManagement {
                 writer.close();
             }
             SpaceMarines newSpaceMarines = new SpaceMarines();
-            newSpaceMarines.setSpaceMarines(new ArrayList<>(spaceMarines.values()));
+            newSpaceMarines.setSpaceMarines(spaceMarines);
             JAXBContext context = JAXBContext.newInstance(SpaceMarines.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -613,7 +615,7 @@ public class CollectionManagement {
                             groupCountingByCoordinates();
                             break;
                         case "filter_by_chapter":
-                            filterByChapter(scanChapter());
+                            filterByChapter(cleanUserCommand[1]);
                             break;
                         case "filter_starts_with_name":
                             filterStartsWithName(cleanUserCommand[1]);
@@ -742,11 +744,10 @@ public class CollectionManagement {
     }
 
     /** Method for printing elements whose chapter field value is equal to it's value of chapter */
-    public void filterByChapter(Chapter chapter) {
+    public void filterByChapter(String chapterName) {
         boolean check = false;
         for (SpaceMarine spaceMarine : spaceMarines.values()) {
-            if (spaceMarine.getChapter().getChapterName().equals(chapter.getChapterName()) &&
-                    spaceMarine.getChapter().getChapterWorld().equals(chapter.getChapterWorld())) {
+            if (spaceMarine.getChapter().getChapterName().equals(chapterName)) {
                 System.out.println(spaceMarine);
                 check = true;
             }
