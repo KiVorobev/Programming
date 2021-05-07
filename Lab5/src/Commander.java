@@ -96,7 +96,7 @@ public class Commander {
                             manager.groupCountingByCoordinates();
                             break;
                         case "filter_by_chapter":
-                            manager.filterByChapter(manager.scanChapter());
+                            manager.filterByChapter(cleanUserCommand[1]);
                             break;
                         case "filter_starts_with_name":
                             manager.filterStartsWithName(cleanUserCommand[1]);
