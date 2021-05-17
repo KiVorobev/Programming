@@ -13,8 +13,6 @@ public class UDPClient{
     private static byte[] buffer;
     private static final Serialization serialization = new Serialization(); // сериализптор/десериализатор
     private static BufferedReader reader; // ридер читающий с консоли
-    private static BufferedReader in;
-    private static BufferedWriter out;
     private static InetAddress address;
 
         /**
@@ -27,11 +25,6 @@ public class UDPClient{
                 connection(true);
                 while (true) {
                     String message = write();
-                    read();
-                    if (message.equals("exit")) {
-                        connection(false);
-                        break;
-                    }
                     read();
                 }
             } catch (IOException ioException) {
@@ -46,7 +39,7 @@ public class UDPClient{
                             exit();
                             break;
                         default:
-                            System.out.println("Please write a correct answer.");
+                            System.out.println("Please write a correct answer ('yes' or 'no').");
                     }
                 }
                 System.out.print("Connecting...");
@@ -82,15 +75,11 @@ public class UDPClient{
          */
         public static String write() throws IOException {
             System.out.println("Enter a command: ");
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             String command = reader.readLine();
             String[] userCommand = command.trim().split(" ", 3);
             buffer = command.getBytes();
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 4242);
             clientSocket.send(packet);
-            out.write(command + "\n");
-            out.flush();
             return command;
         }
 
