@@ -7,12 +7,10 @@ import java.util.*;
 public class UDPClient{
 
     /** Порт сервера, к которому собирается подключиться клиентский сокет */
-    public final static int servicePort = 50001;
+    public final static int servicePort = 2828;
     private static DatagramSocket clientSocket; // socket for  для общения
-    private static Socket socket;
     private static byte[] buffer;
     private static final Serialization serialization = new Serialization(); // сериализптор/десериализатор
-    private static BufferedReader reader; // ридер читающий с консоли
     private static InetAddress address;
 
         /**
@@ -31,7 +29,8 @@ public class UDPClient{
                 System.err.println("Server is not available at the moment. Try to reconnect?" +
                         "\nEnter 'yes' or 'no'.");
                 String answer;
-                while (!(answer = reader.readLine()).equals("yes")) {
+                Scanner scanner = new Scanner(System.in);
+                while (!(answer = scanner.nextLine()).equals("yes")) {
                     switch (answer) {
                         case "":
                             break;
@@ -74,11 +73,12 @@ public class UDPClient{
          * @throws IOException - ошибка чтения
          */
         public static String write() throws IOException {
+            Scanner scanner = new Scanner(System.in);
             System.out.println("Enter a command: ");
-            String command = reader.readLine();
+            String command = scanner.nextLine();
             String[] userCommand = command.trim().split(" ", 3);
             buffer = command.getBytes();
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 4242);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 2828);
             clientSocket.send(packet);
             return command;
         }
