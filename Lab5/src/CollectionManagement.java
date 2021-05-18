@@ -511,17 +511,11 @@ public class CollectionManagement {
             } else {
                 key = Integer.parseInt(in);
             }
-            boolean check = false;
-            for (Map.Entry<Integer, SpaceMarine> entry : spaceMarines.entrySet()) {
-                if (entry.getKey().equals(key)) {
-                    spaceMarines.remove(entry.getKey());
-                    check = true;
-                }
-            }
-            if (!check) {
-                System.out.println("An element with this key does not exist.");
-            } else {
+            if (spaceMarines.containsKey(key)) {
+                spaceMarines.remove(key);
                 System.out.println("Element deleted successfully.");
+            } else {
+                System.out.println("An element with this key does not exist.");
             }
         } catch (NumberFormatException numberFormatException) {
             System.out.println("As an argument you need to enter a number.");
@@ -604,7 +598,7 @@ public class CollectionManagement {
                             exit();
                             break;
                         case "remove_greater":
-                            removeGreater(scanHealth());
+                            removeGreater(cleanUserCommand[1]);
                             break;
                         case "replace_if_greater":
                             replaceIfGreater(cleanUserCommand[1]);
@@ -649,18 +643,42 @@ public class CollectionManagement {
     }
 
     /** Method for removing elements from collection if it`s health more than entered health */
-    public void removeGreater(int in) {
-        boolean check = false;
-        for (Map.Entry<Integer, SpaceMarine> entry : spaceMarines.entrySet()){
-            SpaceMarine test = entry.getValue();
-            if (in < test.getHealth()){
-                spaceMarines.remove(entry.getKey());
-                System.out.println("Element with key " + entry.getKey() + " deleted successfully.");
-                check = true;
+    public void removeGreater(String in) {
+        try {
+            int health;
+            if (in.indexOf(" ") > 0) {
+                health = Integer.parseInt(in.substring(0, in.indexOf(" ")));
+            } else {
+                health = Integer.parseInt(in);
             }
-        }
-        if (!check){
-            System.out.println("There are no elements in the collection that exceed the specified one.");
+            int counter = 0;
+            boolean check = false;
+            Set<Integer> keys = new HashSet<>();
+            for (Map.Entry<Integer, SpaceMarine> entry : spaceMarines.entrySet()) {
+                SpaceMarine test = entry.getValue();
+                if (health < test.getHealth()) {
+                    keys.add(entry.getKey());
+                    check = true;
+                }
+            }
+            if (check) {
+                for (Integer last : keys) {
+                    counter += 1;
+                    spaceMarines.remove(last);
+                }
+            }
+            if (counter == 0) {
+                System.out.println("There are no elements in the collection that exceed the specified one.");
+            }
+            if (counter == 1) {
+                System.out.println("1 element removed successfully.");
+            }
+            if (counter > 1) {
+                System.out.println(counter + " elements removed successfully.");
+            }
+
+        } catch(NumberFormatException numberFormatException) {
+            System.out.println("As an argument you need to enter a number.");
         }
     }
 
