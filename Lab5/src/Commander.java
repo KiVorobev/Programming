@@ -83,8 +83,7 @@ public class Commander {
                             manager.exit();
                             break;
                         case "remove_greater":
-                            System.out.println("Enter characteristics of element, which will be compared with elements in collection.");
-                            manager.removeGreater(manager.scanHealth());
+                            manager.removeGreater(cleanUserCommand[1]);
                             break;
                         case "replace_if_greater":
                             manager.replaceIfGreater(cleanUserCommand[1]);
