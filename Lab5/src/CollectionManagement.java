@@ -20,7 +20,7 @@ public class CollectionManagement {
 
     /** TreeMap collection for keeping a collection as java-object */
     private TreeMap<Integer, SpaceMarine> spaceMarines = new TreeMap<>();
-    /** Field for saving date of initialization thw collection */
+    /** Field for saving date of initialization the collection */
     private java.time.LocalDateTime initializationDate;
     /** HashMap collection for making a manual */
     private HashMap<String, String> infoCommands;
@@ -45,7 +45,7 @@ public class CollectionManagement {
         infoCommands.put("execute_script file_name", " - Read and execute the script from the specified file");
         infoCommands.put("exit", " - End the program");
         infoCommands.put("remove_greater value_of_health", " - Remove all items from the collection that exceed the specified limit");
-        infoCommands.put("replace_if_greater value_of_health", " - Replace the value by key if the new value is greater than the old one");
+        infoCommands.put("replace_if_greater number_of_key", " - Replace the value by key if the new value is greater than the old one");
         infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key exceeds the specified value");
         infoCommands.put("group_counting_by_coordinates", " - Group the collection items by the coordinates field value, output the number of items in each group");
         infoCommands.put("filter_by_chapter chapter_name", " - Output elements whose chapter field value is equal to the specified value");
@@ -195,7 +195,8 @@ public class CollectionManagement {
                 }
             }
             if (!check) {
-                SpaceMarine newSpaceMarine = new SpaceMarine(makeId(), scanName(), scanCoordinates(), returnDate(), scanHealth(), scanCategory(), scanWeapon(), scanMeleeWeapon(), scanChapter());
+                SpaceMarine newSpaceMarine = new SpaceMarine(makeId(), scanName(), scanCoordinates(),
+                        returnDate(), scanHealth(), scanCategory(), scanWeapon(), scanMeleeWeapon(), scanChapter());
                 spaceMarines.put(key, newSpaceMarine);
                 System.out.println("Element added successfully.");
             }
@@ -680,17 +681,18 @@ public class CollectionManagement {
                     int newHealth = scanHealth();
                     if (test.getHealth() < newHealth) {
                         test.setHealth(newHealth);
-                        spaceMarines.remove(key);
                         spaceMarines.put(key, test);
-                    } else {
-                        System.out.println("New value is lower than old");
+                        System.out.println("Health value updated successfully.");
+                    } else
+                        if (test.getHealth() == newHealth) {
+                            System.out.println("New value is equal to old.");
+                        } else {
+                        System.out.println("New value is lower than old.");
                     }
                 }
             }
             if (!check) {
-                System.out.println("No such key exists");
-            } else {
-                System.out.println("Health value updated successfully.");
+                System.out.println("No such key exists.");
             }
         } catch (NumberFormatException numberFormatException) {
             System.out.println("As an argument you need to enter a number.");
