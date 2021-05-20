@@ -2,10 +2,19 @@ package commands;
 
 import data.Manager;
 
+/**
+ * Class of command 'remove_key'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class RemoveKey extends Command {
 
     /**
-     * Method for deleting element in the collection by it's key
+     * Method for executing this command
+     *
+     * @param in - number of key
+     * @param collection - collection
+     * @return - String description of command
      */
     public String action(String in, Manager collection) {
         try {
