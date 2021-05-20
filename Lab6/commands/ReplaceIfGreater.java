@@ -2,12 +2,22 @@ package commands;
 
 import data.Manager;
 import data.SpaceMarine;
-
 import java.util.Map;
 
+/**
+ * Class of command 'replace_if_greater'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class ReplaceIfGreater extends Command {
 
-    /** Method for update health field if entered health more than it's health */
+    /**
+     * Method for executing this command
+     *
+     * @param in - number of key
+     * @param collection - collection
+     * @return - String description of command
+     */
     public String action(String in, Manager collection) {
         String message = null;
         try {
