@@ -13,8 +13,8 @@ import java.io.*;
 
 /**
  * @author Kirill Vorobyev
- * @version 1.2
- * Class which realised user`s commands
+ * @version 1.0
+ * Class for parsing XML file and saving it
  */
 public class Manager {
 
@@ -200,13 +200,5 @@ public class Manager {
 
     public void setInitializationDate(LocalDateTime initializationDate) {
         this.initializationDate = initializationDate;
-    }
-
-    public File getXmlFile() {
-        return xmlFile;
-    }
-
-    public void setXmlFile(File xmlFile) {
-        this.xmlFile = xmlFile;
     }
 }
