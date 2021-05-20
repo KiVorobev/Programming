@@ -5,9 +5,19 @@ import data.SpaceMarine;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class of command 'group_counting_by_coordinates'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class GroupCountingByCoordinates extends Command {
 
-    /** Method for counting amount and grouping elements by it's coordinates */
+    /**
+     * Method for executing this command
+     *
+     * @param collection - collection
+     * @return - String description of command
+     */
     public String action(Manager collection) {
         StringBuilder message = new StringBuilder();
         Map<String, Integer> cords = new HashMap<>();
