@@ -3,9 +3,20 @@ package commands;
 import data.Manager;
 import data.SpaceMarine;
 
+/**
+ * Class of command 'update'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class Update extends Command {
 
-    /** Method for updating the element by it's ID */
+    /**
+     * Method for executing this command
+     *
+     * @param in - number of id
+     * @param collection - collection
+     * @return - String description of command
+     */
     public String action(String in, Manager collection) {
         try {
             int id = Integer.parseInt(in.substring(1, Integer.parseInt(in.substring(0,1))+1));
