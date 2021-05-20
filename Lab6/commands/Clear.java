@@ -2,14 +2,19 @@ package commands;
 
 import data.Manager;
 
+/**
+ * Class of command 'clear'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class Clear extends Command {
 
     /**
-     * Метод который удаляет все элементы из коллекции
+     * Method for executing this command
      *
-     * @param collection - коллекция
+     * @param collection - collection
+     * @return - String description of command
      */
-
     public String action(Manager collection){
         String message = null;
         if (collection.getSpaceMarines().isEmpty()){
