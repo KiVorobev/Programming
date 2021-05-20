@@ -5,6 +5,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author Kirill Vorobyev
+ * @version 1.0
+ * The class that is stored in the collection
+ */
 @XmlRootElement(name = "spaceMarine")
 @XmlAccessorType(XmlAccessType.NONE)
 public class SpaceMarine {
