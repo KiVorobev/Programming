@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * @author Kirill Vorobyev
- * @version 1.2
+ * @version 1.0
  * Class for describing a collection in a marshaling-ready view
  */
 
