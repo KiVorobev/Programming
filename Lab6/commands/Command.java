@@ -9,19 +9,19 @@ import data.Manager;
  */
 abstract public class Command {
 
-    /** Метод который запускает выполнение команды */
+    /** Method for commands execution */
     public Object action(String s) {
         return null;
     }
-
+    /** Method for commands execution */
     public String action(){
         return null;
     }
-
+    /** Method for commands execution */
     public Object action(Manager m) {
         return null;
     }
-
+    /** Method for commands execution */
     public Object action(String s, Manager m) {
         return null;
     }
