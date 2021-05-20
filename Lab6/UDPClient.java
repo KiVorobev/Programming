@@ -28,6 +28,9 @@ public class UDPClient {
      */
     private static InetAddress address;
 
+    /**
+     * Client entry point
+     */
     public static void main(String[] args) throws IOException {
         try {
             socket = new DatagramSocket();
@@ -35,13 +38,13 @@ public class UDPClient {
             System.out.println("Server connection established.");
             while (true) {
                 String message = write();
-                if (message.equals("repeat")){
+                if (message.equals("repeat")) {
                     continue;
                 }
                 String answer = read();
                 // finding a phrase in a string
                 int check = answer.indexOf("close client");
-                if (message.equals("exit") || check != -1 ) {
+                if (message.equals("exit") || check != -1) {
                     System.out.println("Program will be finished now. See you again:)");
                     System.exit(0);
                     break;
@@ -57,7 +60,7 @@ public class UDPClient {
      * Module for sending requests to the server
      *
      * @return String - entered command
-     * @throws IOException - read exception
+     * @throws IOException - receiving exception
      */
     public static String write() throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -79,11 +82,11 @@ public class UDPClient {
                     }
                     userCommand[1] = String.valueOf(check);
                     StringBuilder message = new StringBuilder();
-                    Helper receiver = new Helper();
-                    String data = receiver.returnDate();
-                    SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), receiver.scanName(),
-                            receiver.scanCoordinates(), data, receiver.scanHealth(), receiver.scanCategory(),
-                            receiver.scanWeapon(), receiver.scanMeleeWeapon(), receiver.scanChapter());
+                    HelperWithElements helperWithElements = new HelperWithElements();
+                    String data = helperWithElements.returnDate();
+                    SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), helperWithElements.scanName(),
+                            helperWithElements.scanCoordinates(), data, helperWithElements.scanHealth(), helperWithElements.scanCategory(),
+                            helperWithElements.scanWeapon(), helperWithElements.scanMeleeWeapon(), helperWithElements.scanChapter());
                     message.append(userCommand[0]).append(" ").append(newSpaceMarine.getId()).append(" ")
                             .append(newSpaceMarine.getName()).append(" ").
                             append(newSpaceMarine.getCoordinates().getXCord()).append(" ")
@@ -116,7 +119,7 @@ public class UDPClient {
                             check = Integer.parseInt(userCommand[1]);
                         }
                         userCommand[1] = String.valueOf(check);
-                        Helper receiver = new Helper();
+                        HelperWithElements receiver = new HelperWithElements();
                         String newName = receiver.scanName();
                         StringBuilder message = new StringBuilder();
                         message.append(userCommand[0]).append(" ").append(userCommand[1].length())
@@ -143,7 +146,7 @@ public class UDPClient {
                                 check = Integer.parseInt(userCommand[1]);
                             }
                             userCommand[1] = String.valueOf(check);
-                            Helper receiver = new Helper();
+                            HelperWithElements receiver = new HelperWithElements();
                             Integer newHealth = receiver.scanHealth();
                             StringBuilder message = new StringBuilder();
                             message.append(userCommand[0]).append(" ").append(userCommand[1].length())
@@ -179,8 +182,8 @@ public class UDPClient {
     /**
      * Module for receiving messages from the server
      *
+     * @return String - answer from server
      * @throws IOException - receiving exception
-     * @return
      */
     public static String read() throws IOException {
         byte[] bufferOut = new byte[65535];
@@ -190,14 +193,6 @@ public class UDPClient {
         System.out.println("-----------------------------------------------------------------------------------\n"
                 + answer + "\n-----------------------------------------------------------------------------------");
         return answer;
-    }
-
-    /**
-     * Method to terminate a client
-     */
-    public static void exit() {
-        System.out.println("Program will be finished now. See you again:)");
-        System.exit(0);
     }
 }
 
