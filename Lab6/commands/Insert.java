@@ -3,10 +3,19 @@ package commands;
 import data.*;
 import java.util.Map;
 
+/**
+ * Class of command 'insert'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class Insert extends Command {
 
     /**
-     * Method for adding element in the collection
+     * Method for executing this command
+     *
+     * @param element - SpaceMarine element
+     * @param manager - collection
+     * @return - String description of command
      */
     public String action(String element, Manager manager) {
         System.out.println(element);
@@ -36,6 +45,7 @@ public class Insert extends Command {
     /**
      * Method for receiving ID of element
      *
+     * @param manager - collection
      * @return int ID
      */
     public int makeId(Manager manager) {
