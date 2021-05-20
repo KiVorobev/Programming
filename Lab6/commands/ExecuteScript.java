@@ -7,6 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Class of command 'execute_script'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class ExecuteScript extends Command {
 
     /** Method for executing script from external file */
