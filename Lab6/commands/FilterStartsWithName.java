@@ -4,10 +4,19 @@ package commands;
 import data.Manager;
 import data.SpaceMarine;
 
+/**
+ * Class of command 'filter_starts_with_name'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class FilterStartsWithName extends Command {
 
     /**
-     * Method for printing elements whose name start from it's letters
+     * Method for executing this command
+     *
+     * @param startName - start part of name
+     * @param collection - collection
+     * @return - String description of command
      */
     public String action(String startName, Manager collection) {
         try {
