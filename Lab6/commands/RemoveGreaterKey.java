@@ -7,9 +7,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Class of command 'remove_greater_key'
+ * @author Kirill Vorobyev
+ * @version 1.0
+ */
 public class RemoveGreaterKey extends Command {
 
-    /** Method for removing elements from collection if it`s value of key more than entered value */
+    /**
+     * Method for executing this command
+     *
+     * @param in - number of key
+     * @param collection - collection
+     * @return - String description of command
+     */
     public String action(String in, Manager collection) {
         String message = null;
         try {
