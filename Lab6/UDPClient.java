@@ -33,22 +33,29 @@ public class UDPClient {
      */
     public static void main(String[] args) throws IOException {
         try {
-            socket = new DatagramSocket();
+            System.out.println("                    /  /           \\  \\\n" +
+                    "                   /  /             \\  \\\n" +
+                    "    Welcome to    /  /               \\  \\        By\n" +
+                    "    Client App   /  /                 \\  \\  Kirill Vorobyev\n" +
+                    "________________/  /                   \\  \\_________________\n" +
+                    "__________________/                     \\___________________\n" +
+                    "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             address = InetAddress.getByName("localhost");
-            System.out.println("Server connection established.");
             while (true) {
+                socket = new DatagramSocket();
                 String message = write();
                 if (message.equals("repeat")) {
                     continue;
                 }
                 String answer = read();
                 // finding a phrase in a string
-                int check = answer.indexOf("close client");
+                int check = answer.indexOf("Program will be finished now. See you again:)");
                 if (message.equals("exit") || check != -1) {
-                    System.out.println("Program will be finished now. See you again:)");
                     System.exit(0);
+                    socket.close();
                     break;
                 }
+                socket.close();
             }
         } catch (NoSuchElementException noSuchElementException) {
             System.out.println("Program was stopped successfully.");
@@ -60,7 +67,7 @@ public class UDPClient {
      * Module for sending requests to the server
      *
      * @return String - entered command
-     * @throws IOException - receiving exception
+     * @throws IOException receiving exception
      */
     public static String write() throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -82,26 +89,26 @@ public class UDPClient {
                     }
                     userCommand[1] = String.valueOf(check);
                     StringBuilder message = new StringBuilder();
-                    HelperWithElements helperWithElements = new HelperWithElements();
-                    String data = helperWithElements.returnDate();
-                    SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), helperWithElements.scanName(),
-                            helperWithElements.scanCoordinates(), data, helperWithElements.scanHealth(), helperWithElements.scanCategory(),
-                            helperWithElements.scanWeapon(), helperWithElements.scanMeleeWeapon(), helperWithElements.scanChapter());
-                    message.append(userCommand[0]).append(" ").append(newSpaceMarine.getId()).append(" ")
-                            .append(newSpaceMarine.getName()).append(" ").
-                            append(newSpaceMarine.getCoordinates().getXCord()).append(" ")
-                            .append(newSpaceMarine.getCoordinates().getYCord()).append(" ").
-                            append(newSpaceMarine.getCreationDate()).append(" ")
-                            .append(newSpaceMarine.getHealth()).append(" ").append(newSpaceMarine.getCategory())
-                            .append(" ").append(newSpaceMarine.getWeaponType()).append(" ")
-                            .append(newSpaceMarine.getMeleeWeapon()).append(" ")
-                            .append(newSpaceMarine.getChapter().getChapterName()).append(" ")
+                    InputCheck inputCheck = new InputCheck();
+                    String data = inputCheck.returnDate();
+                    SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), inputCheck.scanName(),
+                            inputCheck.scanCoordinates(), data, inputCheck.scanHealth(), inputCheck.scanCategory(),
+                            inputCheck.scanWeapon(), inputCheck.scanMeleeWeapon(), inputCheck.scanChapter());
+                    message.append(userCommand[0]).append(" \n").append(newSpaceMarine.getId()).append("\n")
+                            .append(newSpaceMarine.getName()).append("\n").
+                            append(newSpaceMarine.getCoordinates().getXCord()).append("\n")
+                            .append(newSpaceMarine.getCoordinates().getYCord()).append("\n").
+                            append(newSpaceMarine.getCreationDate()).append("\n")
+                            .append(newSpaceMarine.getHealth()).append("\n").append(newSpaceMarine.getCategory())
+                            .append("\n").append(newSpaceMarine.getWeaponType()).append("\n")
+                            .append(newSpaceMarine.getMeleeWeapon()).append("\n")
+                            .append(newSpaceMarine.getChapter().getChapterName()).append("\n")
                             .append(newSpaceMarine.getChapter().getChapterWorld());
                     buffer = message.toString().getBytes();
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                     socket.send(packet);
                 } catch (NumberFormatException numberFormatException) {
-                    System.out.println("As an argument you need to enter a number.");
+                    System.out.println("Argument must be of type integer. Try again.");
                     command = "repeat";
                 }
             } else {
@@ -119,16 +126,27 @@ public class UDPClient {
                             check = Integer.parseInt(userCommand[1]);
                         }
                         userCommand[1] = String.valueOf(check);
-                        HelperWithElements receiver = new HelperWithElements();
-                        String newName = receiver.scanName();
+                        InputCheck inputCheck = new InputCheck();
                         StringBuilder message = new StringBuilder();
-                        message.append(userCommand[0]).append(" ").append(userCommand[1].length())
-                                .append(userCommand[1]).append(newName);
+                        String data = inputCheck.returnDate();
+                        SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), inputCheck.scanName(),
+                                inputCheck.scanCoordinates(), data, inputCheck.scanHealth(), inputCheck.scanCategory(),
+                                inputCheck.scanWeapon(), inputCheck.scanMeleeWeapon(), inputCheck.scanChapter());
+                        message.append(userCommand[0]).append(" \n").append(newSpaceMarine.getId()).append("\n")
+                                .append(newSpaceMarine.getName()).append("\n").
+                                append(newSpaceMarine.getCoordinates().getXCord()).append("\n")
+                                .append(newSpaceMarine.getCoordinates().getYCord()).append("\n").
+                                append(newSpaceMarine.getCreationDate()).append("\n")
+                                .append(newSpaceMarine.getHealth()).append("\n").append(newSpaceMarine.getCategory())
+                                .append("\n").append(newSpaceMarine.getWeaponType()).append("\n")
+                                .append(newSpaceMarine.getMeleeWeapon()).append("\n")
+                                .append(newSpaceMarine.getChapter().getChapterName()).append("\n")
+                                .append(newSpaceMarine.getChapter().getChapterWorld());
                         buffer = message.toString().getBytes();
                         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                         socket.send(packet);
                     } catch (NumberFormatException numberFormatException) {
-                        System.out.println("As an argument you need to enter a number.");
+                        System.out.println("Argument must be of type integer. Try again.");
                         command = "repeat";
                     }
                 } else {
@@ -146,16 +164,16 @@ public class UDPClient {
                                 check = Integer.parseInt(userCommand[1]);
                             }
                             userCommand[1] = String.valueOf(check);
-                            HelperWithElements receiver = new HelperWithElements();
+                            InputCheck receiver = new InputCheck();
                             Integer newHealth = receiver.scanHealth();
                             StringBuilder message = new StringBuilder();
-                            message.append(userCommand[0]).append(" ").append(userCommand[1].length())
-                                    .append(userCommand[1]).append(newHealth);
+                            message.append(userCommand[0]).append(" \n").append(userCommand[1])
+                                    .append("\n").append(newHealth);
                             buffer = message.toString().getBytes();
                             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                             socket.send(packet);
                         } catch (NumberFormatException numberFormatException) {
-                            System.out.println("As an argument you need to enter a number.");
+                            System.out.println("Argument must be of type integer. Try again.");
                             command = "repeat";
                         }
                     } else {
@@ -186,13 +204,19 @@ public class UDPClient {
      * @throws IOException - receiving exception
      */
     public static String read() throws IOException {
-        byte[] bufferOut = new byte[65535];
-        DatagramPacket fromServer = new DatagramPacket(bufferOut, bufferOut.length);
-        socket.receive(fromServer);
-        String answer = new String(fromServer.getData(), 0, fromServer.getLength());
-        System.out.println("-----------------------------------------------------------------------------------\n"
-                + answer + "\n-----------------------------------------------------------------------------------");
-        return answer;
+        try {
+            byte[] bufferOut = new byte[65535];
+            DatagramPacket fromServer = new DatagramPacket(bufferOut, bufferOut.length);
+            socket.setSoTimeout(3000);
+            socket.receive(fromServer);
+            String answer = new String(fromServer.getData(), 0, fromServer.getLength());
+            System.out.println("-----------------------------------------------------------------------------------\n"
+                    + answer + "\n-----------------------------------------------------------------------------------");
+            return answer;
+        } catch (SocketTimeoutException socketTimeoutException) {
+            System.out.println("Server is unavailable. Try later.");
+            return "Server is unavailable. Try later.";
+        }
     }
 }
 
