@@ -14,10 +14,10 @@ import javax.xml.bind.annotation.XmlType;
 public class Chapter {
     /** field name */
     @XmlElement
-    private String chapterName; //Поле не может быть null, Строка не может быть пустой
+    private String chapterName; //Field cannot be null, the string cannot be empty
     /** field world */
     @XmlElement
-    private String chapterWorld; //Поле не может быть null
+    private String chapterWorld; //Field cannot be null
 
     /** Constructor */
     public Chapter(String name, String world) {
