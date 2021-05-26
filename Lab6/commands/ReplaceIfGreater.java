@@ -14,15 +14,16 @@ public class ReplaceIfGreater extends Command {
     /**
      * Method for executing this command
      *
-     * @param in - number of key
-     * @param collection - collection
+     * @param in number of key
+     * @param collection collection
      * @return - String description of command
      */
     public String action(String in, Manager collection) {
         String message = null;
         try {
-            int key = Integer.parseInt(in.substring(1, Integer.parseInt(in.substring(0,1))+1));
-            int health = Integer.parseInt(in.substring(Integer.parseInt(in.substring(0,1))+1, in.length()));
+            String[] newElement = in.trim().split("\n", 2);
+            int key = Integer.parseInt(newElement[0]);
+            int health = Integer.parseInt(newElement[1]);
             boolean check = false;
             for (Map.Entry<Integer, SpaceMarine> entry : collection.getSpaceMarines().entrySet()) {
                 if (key == entry.getKey()) {
