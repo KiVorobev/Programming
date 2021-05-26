@@ -15,8 +15,8 @@ public class GroupCountingByCoordinates extends Command {
     /**
      * Method for executing this command
      *
-     * @param collection - collection
-     * @return - String description of command
+     * @param collection collection
+     * @return String description of command
      */
     public String action(Manager collection) {
         StringBuilder message = new StringBuilder();
