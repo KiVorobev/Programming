@@ -12,8 +12,8 @@ public class Clear extends Command {
     /**
      * Method for executing this command
      *
-     * @param collection - collection
-     * @return - String description of command
+     * @param collection collection
+     * @return String description of command
      */
     public String action(Manager collection){
         String message = null;
@@ -21,7 +21,7 @@ public class Clear extends Command {
             message = "Collection is clear.";
         } else {
             collection.getSpaceMarines().clear();
-            message = "Collection successfully cleared.\n";
+            message = "Collection successfully cleared.";
         }
         collection.save();
         return message;
