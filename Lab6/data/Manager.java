@@ -29,27 +29,38 @@ public class Manager {
     /** Field used to determine the starting state of the file */
     boolean needToClear = false;
 
+    /** Set for storing paths to files for command 'execute_script' */
+    static Set<String> paths = new HashSet<>();
+
     {
         initializationDate = java.time.LocalDateTime.now();
 
         // Making a manual
         infoCommands = new HashMap<>();
-        infoCommands.put("help", " - Display help for available commands");
-        infoCommands.put("info", " - Output collection information to the standard output stream");
-        infoCommands.put("show", " - Output all elements of the collection in a string representation to the standard output stream");
-        infoCommands.put("insert number_of_key", " - Add a new element with the specified key");
-        infoCommands.put("update id", " - Update the value of a collection element whose id is equal to the specified one");
-        infoCommands.put("remove_key number_of_key", " - Delete an item from the collection by its key");
-        infoCommands.put("clear", " - Clear the collection");
-        infoCommands.put("save", " - Save the collection to a file");
-        infoCommands.put("execute_script file_name", " - Read and execute the script from the specified file");
-        infoCommands.put("exit", " - End the program");
-        infoCommands.put("remove_greater value_of_health", " - Remove all items from the collection that exceed the specified limit");
-        infoCommands.put("replace_if_greater number_of_key", " - Replace the value by key if the new value is greater than the old one");
-        infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key exceeds the specified value");
-        infoCommands.put("group_counting_by_coordinates", " - Group the collection items by the coordinates field value, output the number of items in each group");
-        infoCommands.put("filter_by_chapter chapter_name", " - Output elements whose chapter field value is equal to the specified value");
-        infoCommands.put("filter_starts_with_name name", " - Output elements whose name field value starts with the specified substring");
+        infoCommands.put("help", "                             - Display help for available commands");
+        infoCommands.put("info", "                             - Output collection information to the standard \n" +
+                "                                   output stream");
+        infoCommands.put("show", "                             - Output all elements of the collection in a string\n" +
+                "                                   representation to the standard output stream");
+        infoCommands.put("insert number_of_key", "             - Add a new element with the specified key");
+        infoCommands.put("update id", "                        - Update the values of a collection element whose id is\n" +
+                "                                   equal to the specified one");
+        infoCommands.put("remove_key number_of_key", "         - Delete an item from the collection by its key");
+        infoCommands.put("clear", "                            - Clear the collection");
+        infoCommands.put("execute_script file_name", "         - Read and execute the script from the specified file");
+        infoCommands.put("exit", "                             - End the program");
+        infoCommands.put("remove_greater value_of_health", "   - Remove all items from the collection that exceed the\n" +
+                "                                   specified limit");
+        infoCommands.put("replace_if_greater number_of_key", " - Replace the value by key if the new value is greater\n" +
+                "                                   than the old one");
+        infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key exceeds\n" +
+                "                                   the specified value");
+        infoCommands.put("group_counting_by_coordinates", "    - Group the collection items by the coordinates field\n" +
+                "                                   value, output the number of items in each group");
+        infoCommands.put("filter_by_chapter chapter_name", "   - Output elements whose chapter field value is equal to\n" +
+                "                                   the specified value");
+        infoCommands.put("filter_starts_with_name name", "     - Output elements whose name field value starts with the\n" +
+                "                                   specified substring");
     }
 
     /** Constructor for checking a path to file existence and file readiness to work */
@@ -86,18 +97,42 @@ public class Manager {
                                     }
                                 }
                                 if (needToCheck) {
-                                    if (!spaceMarines.containsKey(entry.getKey()) &&
-                                            entry.getValue().getId() > 0 &&
-                                            !spaceMarines.containsValue(entry.getValue().getId()) &&
-                                            !entry.getValue().getName().equals(null) &&
-                                            !entry.getValue().getCoordinates().getYCord().equals(null) &&
-                                            !entry.getValue().getCreationDate().equals(null) &&
-                                            (entry.getValue().getHealth() > 0 || entry.getValue().getHealth().equals(null)) &&
-                                            !entry.getValue().getChapter().getChapterName().equals(null) &&
-                                            !entry.getValue().getChapter().getChapterWorld().equals(null)) {
-                                        spaceMarines.put(entry.getKey(), entry.getValue());
-                                        goodElements += 1;
-                                    } else badElements += 1;
+                                    try {
+                                        int i = Integer.parseInt(String.valueOf(entry.getValue().getCoordinates().getXCord()));
+                                        Integer m = Integer.parseInt(String.valueOf(entry.getValue().getCoordinates().getYCord()));
+                                        if (!spaceMarines.containsKey(entry.getKey()) &&
+                                                entry.getValue().getId() > 0 &&
+                                                !spaceMarines.containsValue(entry.getValue().getId()) &&
+                                                !entry.getValue().getName().trim().equals(null) &&
+                                                !entry.getValue().getName().trim().equals("") &&
+                                                !entry.getValue().getCoordinates().getYCord().equals(null) &&
+                                                !entry.getValue().getCoordinates().getYCord().equals("") &&
+                                                !entry.getValue().getCreationDate().equals(null) &&
+                                                (entry.getValue().getHealth() > 0 || entry.getValue().getHealth().equals(null)) &&
+                                                (entry.getValue().getCategory() == null ||
+                                                        entry.getValue().getCategory().equals(AstartesCategory.ASSAULT) ||
+                                                        entry.getValue().getCategory().equals(AstartesCategory.CHAPLAIN) ||
+                                                        entry.getValue().getCategory().equals(AstartesCategory.TACTICAL)) &&
+                                                (entry.getValue().getMeleeWeapon() == null ||
+                                                        entry.getValue().getMeleeWeapon().equals(MeleeWeapon.CHAIN_AXE) ||
+                                                        entry.getValue().getMeleeWeapon().equals(MeleeWeapon.CHAIN_SWORD) ||
+                                                        entry.getValue().getMeleeWeapon().equals(MeleeWeapon.POWER_BLADE) ||
+                                                        entry.getValue().getMeleeWeapon().equals(MeleeWeapon.POWER_FIST)) &&
+                                                (entry.getValue().getWeaponType() == null ||
+                                                        entry.getValue().getWeaponType().equals(Weapon.BOLTGUN) ||
+                                                        entry.getValue().getWeaponType().equals(Weapon.COMBI_PLASMA_GUN) ||
+                                                        entry.getValue().getWeaponType().equals(Weapon.PLASMA_GUN) ||
+                                                        entry.getValue().getWeaponType().equals(Weapon.GRENADE_LAUNCHER)) &&
+                                                !entry.getValue().getChapter().getChapterName().equals(null) &&
+                                                !entry.getValue().getChapter().getChapterName().trim().equals("")&&
+                                                !entry.getValue().getChapter().getChapterWorld().equals(null) &&
+                                                !entry.getValue().getChapter().getChapterWorld().trim().equals("")) {
+                                            spaceMarines.put(entry.getKey(), entry.getValue());
+                                            goodElements += 1;
+                                        } else badElements += 1;
+                                    } catch (NumberFormatException exception){
+                                        badElements += 1;
+                                    }
                                 }
                             }
                         } else {
@@ -111,10 +146,8 @@ public class Manager {
                     initializationDate = LocalDateTime.now();
                 } catch (JAXBException jaxbException) {
                     System.out.println("Violated XML syntax. Check the file and Try again.");
-                    System.exit(0);
                 } catch (FileNotFoundException fileNotFoundException) {
                     System.out.println("File not found.");
-                    System.exit(0);
                 } catch (XMLStreamException xmlStreamException) {
                     xmlFile = new File (pathToXML);
                     needToClear = true;
@@ -123,7 +156,6 @@ public class Manager {
                 }
             } else {
                 System.out.println("Try again.");
-                System.exit(0);
             }
         } catch (NoSuchElementException noSuchElementException) {
             System.out.println("You clicked shortcut for finishing a program.");
@@ -175,6 +207,9 @@ public class Manager {
             System.out.println("Violated XML syntax. Check the file and Try again.");
         } catch (IOException ioException) {
             System.out.println("XML File does not exist.");
+        /*} catch (IllegalArgumentException illegalArgumentException){
+            // Создать новый файл, в который записать коллекцию, сообщить об этом
+            ...*/
         }
     }
 
@@ -200,5 +235,13 @@ public class Manager {
 
     public void setInitializationDate(LocalDateTime initializationDate) {
         this.initializationDate = initializationDate;
+    }
+
+    public static Set<String> getPaths() {
+        return paths;
+    }
+
+    public static void setPaths(Set<String> paths) {
+        Manager.paths = paths;
     }
 }
