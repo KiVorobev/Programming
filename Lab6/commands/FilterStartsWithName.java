@@ -14,9 +14,9 @@ public class FilterStartsWithName extends Command {
     /**
      * Method for executing this command
      *
-     * @param startName - start part of name
-     * @param collection - collection
-     * @return - String description of command
+     * @param startName start part of name
+     * @param collection collection
+     * @return String description of command
      */
     public String action(String startName, Manager collection) {
         try {
