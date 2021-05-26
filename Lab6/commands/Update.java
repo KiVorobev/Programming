@@ -1,7 +1,6 @@
 package commands;
 
-import data.Manager;
-import data.SpaceMarine;
+import data.*;
 
 /**
  * Class of command 'update'
@@ -13,17 +12,30 @@ public class Update extends Command {
     /**
      * Method for executing this command
      *
-     * @param in - number of id
-     * @param collection - collection
-     * @return - String description of command
+     * @param element number of id
+     * @param collection collection
+     * @return String description of command
      */
-    public String action(String in, Manager collection) {
+    public String action(String element, Manager collection) {
         try {
-            int id = Integer.parseInt(in.substring(1, Integer.parseInt(in.substring(0,1))+1));
+            String[] newElement = element.trim().split("\n", 11);
+            Coordinates newCord = new Coordinates(Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]));
+            AstartesCategory newCat = AstartesCategory.valueOf(newElement[6]);
+            Weapon newWeapon = Weapon.valueOf(newElement[7]);
+            MeleeWeapon newMelee = MeleeWeapon.valueOf(newElement[8]);
+            Chapter newChap = new Chapter(newElement[9], newElement[10]);
+            int id = Integer.parseInt(newElement[0]);
             boolean check = false;
             for (SpaceMarine spaceMarine : collection.getSpaceMarines().values()) {
                 if (id == spaceMarine.getId()) {
-                    spaceMarine.setName(in.substring(Integer.parseInt(in.substring(0,1))+1, in.length()).trim());
+                    spaceMarine.setName(newElement[1]);
+                    spaceMarine.setCoordinates(newCord);
+                    spaceMarine.setCreationDate(newElement[4]);
+                    spaceMarine.setHealth(Integer.parseInt(newElement[5]));
+                    spaceMarine.setCategory(newCat);
+                    spaceMarine.setWeaponType(newWeapon);
+                    spaceMarine.setMeleeWeapon(newMelee);
+                    spaceMarine.setChapter(newChap);
                     check = true;
                     collection.save();
                 }
@@ -31,7 +43,7 @@ public class Update extends Command {
             if (!check) {
                 return "An element with this id does not exist.";
             } else {
-                return "Name of element updated successfully.";
+                return "Element updated successfully.";
             }
         } catch (NumberFormatException numberFormatException) {
             return "As an argument you need to enter a number.";
