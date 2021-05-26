@@ -14,20 +14,37 @@ import java.util.NoSuchElementException;
  * @version 1.0
  */
 public class UDPServer {
-    /** Server UDP socket running on this port */
+    /**
+     * Server UDP socket running on this port
+     */
     public final static int servicePort = 2828;
+    /**
+     * Client UDP socket running on this port
+     */
     public static int port;
-    /** Socket for communication */
+    /**
+     * Socket for communication
+     */
     private static DatagramSocket socket;
-    /** Field for storing client commands */
+    /**
+     * Field for storing client commands
+     */
     private static String[] userCommand;
-    /** Map for printing available commands for user */
+    /**
+     * Map for printing available commands for user
+     */
     private static HashMap<String, Command> commands;
-    /** Field for storing the IP-address */
+    /**
+     * Field for storing the IP-address
+     */
     private static InetAddress address;
-    /** Array of bytes for organizing a packet for receiving data from client */
+    /**
+     * Array of bytes for organizing a packet for receiving data from client
+     */
     static byte[] buffer = new byte[65535];
-    /** Array of bytes for organizing a packet for sending answer to client */
+    /**
+     * Array of bytes for organizing a packet for sending answer to client
+     */
     static byte[] secondBuffer = new byte[65535];
 
     /**
@@ -35,18 +52,22 @@ public class UDPServer {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         try {
-            Manager manager = new Manager(args[0]);
-            socket = new DatagramSocket(servicePort);
+            Manager startManager = new Manager(args[0]);
             System.out.println("Starting a server module.");
-                while (true) {
-                    String message = read();
-                    if (message != null) {
-                        write(manager);
-                    }
+            while (true) {
+                socket = new DatagramSocket(servicePort);
+                String message = read();
+                Manager manager = new Manager(args[0]);
+                if (message != null) {
+                    write(manager);
                 }
+                socket.close();
+            }
         } catch (NoSuchElementException noSuchElementException) {
             System.out.println("Program was stopped successfully.");
             System.exit(0);
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
+            System.out.println("Please, enter a path to XML file.");
         }
     }
 
@@ -70,7 +91,7 @@ public class UDPServer {
     /**
      * Module for sending answers to the client
      *
-     * @throws IOException - receiving exception
+     * @throws IOException          - receiving exception
      * @throws InterruptedException - wait exception
      */
     public static void write(Manager collection) throws IOException, InterruptedException {
@@ -90,7 +111,7 @@ public class UDPServer {
      *
      * @return - String description of command
      */
-    public static String easyExecution(String firstArg, Manager manager){
+    public static String easyExecution(String firstArg, Manager manager) {
         String answer;
         switch (firstArg) {
             case "":
@@ -144,7 +165,7 @@ public class UDPServer {
      *
      * @return - String description of command
      */
-    public static String hardExecution(String firstArg, String secondArg, Manager manager){
+    public static String hardExecution(String firstArg, String secondArg, Manager manager) {
         String answer;
         switch (firstArg) {
             case "":
@@ -178,7 +199,9 @@ public class UDPServer {
                 answer = new RemoveKey().action(secondArg, manager);
                 break;
             case "execute_script":
+                Manager.getPaths().add(secondArg.toLowerCase());
                 answer = new ExecuteScript().action(secondArg, manager);
+                Manager.getPaths().clear();
                 break;
             case "remove_greater":
                 answer = new RemoveGreater().action(secondArg, manager);
