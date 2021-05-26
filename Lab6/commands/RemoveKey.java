@@ -12,8 +12,8 @@ public class RemoveKey extends Command {
     /**
      * Method for executing this command
      *
-     * @param in - number of key
-     * @param collection - collection
+     * @param in number of key
+     * @param collection collection
      * @return - String description of command
      */
     public String action(String in, Manager collection) {
