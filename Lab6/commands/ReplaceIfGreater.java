@@ -45,7 +45,7 @@ public class ReplaceIfGreater extends Command {
                 message = "No such key exists.";
             }
         } catch (NumberFormatException numberFormatException) {
-            message = "As an argument you need to enter a number.";
+            message = "Argument must be of type integer. Try again.";
         }
         return message;
     }
