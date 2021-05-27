@@ -59,7 +59,7 @@ public class RemoveGreaterKey extends Command {
                 message = counter + " elements removed successfully.";
             }
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
-            message = "As an argument you need to enter a number.";
+            message = "Argument must be of type integer. Try again.";
         }
         collection.save();
         return message;
