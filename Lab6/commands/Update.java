@@ -20,9 +20,18 @@ public class Update extends Command {
         try {
             String[] newElement = element.trim().split("\n", 11);
             Coordinates newCord = new Coordinates(Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]));
-            AstartesCategory newCat = AstartesCategory.valueOf(newElement[6]);
-            Weapon newWeapon = Weapon.valueOf(newElement[7]);
-            MeleeWeapon newMelee = MeleeWeapon.valueOf(newElement[8]);
+            AstartesCategory newCat = null;
+            Weapon newWeapon = null;
+            MeleeWeapon newMelee = null;
+            if (!newElement[6].equals("null")) {
+                newCat = AstartesCategory.valueOf(newElement[6]);
+            }
+            if (!newElement[7].equals("null")) {
+                newWeapon = Weapon.valueOf(newElement[7]);
+            }
+            if (!newElement[8].equals("null")) {
+                newMelee = MeleeWeapon.valueOf(newElement[8]);
+            }
             Chapter newChap = new Chapter(newElement[9], newElement[10]);
             int id = Integer.parseInt(newElement[0]);
             boolean check = false;
@@ -46,7 +55,7 @@ public class Update extends Command {
                 return "Element updated successfully.";
             }
         } catch (NumberFormatException numberFormatException) {
-            return "As an argument you need to enter a number.";
+            return "Argument must be of type integer. Try again.";
         }
     }
 }
