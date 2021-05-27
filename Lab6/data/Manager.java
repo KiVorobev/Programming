@@ -38,29 +38,32 @@ public class Manager {
         // Making a manual
         infoCommands = new HashMap<>();
         infoCommands.put("help", "                             - Display help for available commands");
-        infoCommands.put("info", "                             - Output collection information to the standard \n" +
+        infoCommands.put("info", "                             - Output collection information to the standard\n" +
                 "                                   output stream");
-        infoCommands.put("show", "                             - Output all elements of the collection in a string\n" +
-                "                                   representation to the standard output stream");
+        infoCommands.put("show", "                             - Output all elements of the collection in a\n" +
+                "                                   string representation to the standard output\n" +
+                "                                   stream");
         infoCommands.put("insert number_of_key", "             - Add a new element with the specified key");
-        infoCommands.put("update id", "                        - Update the values of a collection element whose id is\n" +
-                "                                   equal to the specified one");
+        infoCommands.put("update id", "                        - Update the values of a collection element whose\n" +
+                "                                   id is equal to the specified one");
         infoCommands.put("remove_key number_of_key", "         - Delete an item from the collection by its key");
         infoCommands.put("clear", "                            - Clear the collection");
-        infoCommands.put("execute_script file_name", "         - Read and execute the script from the specified file");
+        infoCommands.put("execute_script file_name", "         - Read and execute the script from the specified\n" +
+                "                                   file");
         infoCommands.put("exit", "                             - End the program");
-        infoCommands.put("remove_greater value_of_health", "   - Remove all items from the collection that exceed the\n" +
-                "                                   specified limit");
-        infoCommands.put("replace_if_greater number_of_key", " - Replace the value by key if the new value is greater\n" +
-                "                                   than the old one");
-        infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key exceeds\n" +
-                "                                   the specified value");
-        infoCommands.put("group_counting_by_coordinates", "    - Group the collection items by the coordinates field\n" +
-                "                                   value, output the number of items in each group");
-        infoCommands.put("filter_by_chapter chapter_name", "   - Output elements whose chapter field value is equal to\n" +
-                "                                   the specified value");
-        infoCommands.put("filter_starts_with_name name", "     - Output elements whose name field value starts with the\n" +
-                "                                   specified substring");
+        infoCommands.put("remove_greater value_of_health", "   - Remove all items from the collection that exceed\n" +
+                "                                   the specified limit");
+        infoCommands.put("replace_if_greater number_of_key", " - Replace the value by key if the new value is\n" +
+                "                                   greater than the old one");
+        infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key\n" +
+                "                                   exceeds the specified value");
+        infoCommands.put("group_counting_by_coordinates", "    - Group the collection items by the coordinates\n" +
+                "                                   field value, output the number of items in each\n" +
+                "                                   group");
+        infoCommands.put("filter_by_chapter chapter_name", "   - Output elements whose chapter field value is\n" +
+                "                                   equal to the specified value");
+        infoCommands.put("filter_starts_with_name name", "     - Output elements whose name field value starts\n" +
+                "                                   with the specified substring");
     }
 
     /** Constructor for checking a path to file existence and file readiness to work */
