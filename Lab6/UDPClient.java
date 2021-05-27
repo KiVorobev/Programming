@@ -108,11 +108,15 @@ public class UDPClient {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                     socket.send(packet);
                 } catch (NumberFormatException numberFormatException) {
-                    System.out.println("Argument must be of type integer. Try again.");
+                    System.out.println("--------------------------------------------------------------------------------\n" +
+                            "Argument must be of type integer. Try again.\n" +
+                            "--------------------------------------------------------------------------------");
                     command = "repeat";
                 }
             } else {
-                System.out.println("This command needs an argument.");
+                System.out.println("--------------------------------------------------------------------------------\n" +
+                        "Please, enter number_of_key.\n" +
+                        "--------------------------------------------------------------------------------");
                 command = "repeat";
             }
         } else {
@@ -146,11 +150,15 @@ public class UDPClient {
                         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                         socket.send(packet);
                     } catch (NumberFormatException numberFormatException) {
-                        System.out.println("Argument must be of type integer. Try again.");
+                        System.out.println("--------------------------------------------------------------------------------\n" +
+                                "Argument must be of type integer. Try again.\n" +
+                                "--------------------------------------------------------------------------------");
                         command = "repeat";
                     }
                 } else {
-                    System.out.println("This command needs an argument.");
+                    System.out.println("--------------------------------------------------------------------------------\n" +
+                            "Please, enter id.\n" +
+                            "--------------------------------------------------------------------------------");
                     command = "repeat";
                 }
             } else {
@@ -173,11 +181,15 @@ public class UDPClient {
                             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                             socket.send(packet);
                         } catch (NumberFormatException numberFormatException) {
-                            System.out.println("Argument must be of type integer. Try again.");
+                            System.out.println("--------------------------------------------------------------------------------\n" +
+                                    "Argument must be of type integer. Try again.\n" +
+                                    "--------------------------------------------------------------------------------\n");
                             command = "repeat";
                         }
                     } else {
-                        System.out.println("This command needs an argument.");
+                        System.out.println("--------------------------------------------------------------------------------\n" +
+                                "Please, enter number_of_key.\n" +
+                                "--------------------------------------------------------------------------------");
                         command = "repeat";
                     }
                 } else {
@@ -210,8 +222,8 @@ public class UDPClient {
             socket.setSoTimeout(3000);
             socket.receive(fromServer);
             String answer = new String(fromServer.getData(), 0, fromServer.getLength());
-            System.out.println("-----------------------------------------------------------------------------------\n"
-                    + answer + "\n-----------------------------------------------------------------------------------");
+            System.out.println("--------------------------------------------------------------------------------\n"
+                    + answer + "\n--------------------------------------------------------------------------------");
             return answer;
         } catch (SocketTimeoutException socketTimeoutException) {
             System.out.println("Server is unavailable. Try later.");
