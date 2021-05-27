@@ -36,7 +36,7 @@ public class RemoveKey extends Command {
                 return "An element with this key does not exist.";
             }
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
-            return "As an argument you need to enter a number.";
+            return "Argument must be of type integer. Try again.";
         }
     }
 }
