@@ -37,7 +37,6 @@ public class FileWorker {
     static final Logger logger = Logger.getLogger(FileWorker.class.getName());
     /** Field used to determine the starting state of the file */
     boolean needToCreate = false;
-    boolean wasStart;
 
     {
         initializationDate = java.time.LocalDateTime.now();
