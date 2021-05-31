@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 
 /**
  * Class of command 'info'
@@ -15,10 +15,9 @@ public class Info extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(Manager collection) {
-        String message = "Collection Type: " + collection.getSpaceMarines().getClass() +
+    public String action(FileWorker collection) {
+        return "Collection Type: " + collection.getSpaceMarines().getClass() +
                 "\nInitialization date: " + collection.getInitializationDate() +
                 "\nAmount of elements: " + collection.getSpaceMarines().size();
-        return message;
     }
 }
