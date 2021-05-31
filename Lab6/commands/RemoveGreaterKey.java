@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 import data.SpaceMarine;
 
 import java.util.HashSet;
@@ -21,7 +21,7 @@ public class RemoveGreaterKey extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(String in, Manager collection) {
+    public String action(String in, FileWorker collection) {
         String message = null;
         try {
             String test = in;
