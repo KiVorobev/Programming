@@ -16,7 +16,7 @@ public class Update extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(String element, Manager collection) {
+    public String action(String element, FileWorker collection) {
         try {
             String[] newElement = element.trim().split("\n", 11);
             Coordinates newCord = new Coordinates(Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]));
