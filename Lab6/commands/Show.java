@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 import data.SpaceMarine;
 
 import java.util.Map;
@@ -18,12 +18,11 @@ public class Show extends Command {
      * @param collection - collection
      * @return - String description of command
      */
-    public String action(Manager collection){
+    public String action(FileWorker collection){
         StringBuilder message = new StringBuilder();
         if (!collection.getSpaceMarines().isEmpty()) {
             for (Map.Entry<Integer, SpaceMarine> entry : collection.getSpaceMarines().entrySet()) {
-                message.append(entry.getKey() + " ");
-                message.append(entry.getValue());
+                message.append(entry.getKey() + " " + entry.getValue());
             }
         } else {
             message.append("Collection is empty");
