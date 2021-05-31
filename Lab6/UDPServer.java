@@ -1,12 +1,19 @@
 import commands.*;
-import data.Manager;
+import data.FileWorker;
+import data.SpaceMarine;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
+import java.util.logging.*;
+
+import static java.util.logging.Level.*;
 
 /**
  * Class for starting a server
@@ -31,10 +38,6 @@ public class UDPServer {
      */
     private static String[] userCommand;
     /**
-     * Map for printing available commands for user
-     */
-    private static HashMap<String, Command> commands;
-    /**
      * Field for storing the IP-address
      */
     private static InetAddress address;
@@ -46,28 +49,112 @@ public class UDPServer {
      * Array of bytes for organizing a packet for sending answer to client
      */
     static byte[] secondBuffer = new byte[65535];
+    /**
+     * Logger
+     */
+    static final Logger logger = Logger.getLogger(UDPServer.class.getName());
+    /**
+     * Buffer for collection
+     */
+    static TreeMap<Integer, SpaceMarine> lastCollection = new TreeMap<>();
 
     /**
      * Server entry point
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         try {
-            Manager startManager = new Manager(args[0]);
-            System.out.println("Starting a server module.");
+            connection();
+            FileWorker startFileWorker = new FileWorker(args[0]);
+            if (startFileWorker.isNeedToCreate()){
+                logger.severe("Try again.");
+                System.exit(0);
+            }
+            lastCollection = startFileWorker.getSpaceMarines();
+            logger.info("Server started.");
             while (true) {
                 socket = new DatagramSocket(servicePort);
                 String message = read();
-                Manager manager = new Manager(args[0]);
+                FileWorker fileWorker = new FileWorker(args[0]);
+                if (fileWorker.isNeedToCreate()){
+                    File file = new File(args[0]);
+                    logger.info("A new file has been created in the same path.");
+                    fileWorker.setXmlFile(file);
+                    fileWorker.setSpaceMarines(lastCollection);
+                    fileWorker.save();
+                }
                 if (message != null) {
-                    write(manager);
+                    write(fileWorker);
+                    lastCollection = fileWorker.getSpaceMarines();
                 }
                 socket.close();
             }
         } catch (NoSuchElementException noSuchElementException) {
-            System.out.println("Program was stopped successfully.");
+            logger.severe("Program was stopped successfully.");
             System.exit(0);
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
-            System.out.println("Please, enter a path to XML file.");
+            logger.severe("Please, enter a path to XML file.");
+        } catch (BindException bindException) {
+            logger.severe("Server is already running!");
+        }
+    }
+
+    /**
+     * Module for connecting the server to a file with a collection
+     *
+     * @throws IOException - receiving exception
+     */
+    public static void connection() throws IOException {
+        try {
+            Handler fileHandler = new FileHandler("MyLogs");
+            class MyFormatter extends Formatter {
+                @Override
+                public String format(LogRecord record) {
+                    Date date = new Date(record.getMillis());
+                    int day = date.getDate();
+                    String finalDay = String.valueOf(day);
+                    if (day < 10) {
+                        finalDay = "0" + finalDay;
+                    }
+                    int month = date.getMonth() + 1;
+                    String finalMonth = String.valueOf(month);
+                    if (month < 10) {
+                        finalMonth = "0" + finalMonth;
+                    }
+                    int year = date.getYear() + 1900;
+                    String finalYear = String.valueOf(year);
+                    if (year < 10) {
+                        finalYear = "0" + finalYear;
+                    }
+                    int hours = date.getHours();
+                    String finalHours = String.valueOf(hours);
+                    if (hours < 10) {
+                        finalHours = "0" + finalHours;
+                    }
+                    int minutes = date.getMinutes();
+                    String finalMinutes = String.valueOf(minutes);
+                    if (minutes < 10) {
+                        finalMinutes = "0" + finalMinutes;
+                    }
+                    int seconds = date.getSeconds();
+                    String finalSeconds = String.valueOf(seconds);
+                    if (seconds < 10) {
+                        finalSeconds = "0" + finalSeconds;
+                    }
+                    return "(" + finalDay + "." + finalMonth + "." + finalYear + " " +
+                            finalHours + ":" + finalMinutes + ":" + finalSeconds + ") " +
+                            record.getLevel() + " [" + record.getLoggerName() + "] : " + record.getMessage() + "\n";
+                }
+            }
+            fileHandler.setFormatter(new MyFormatter());
+            logger.addHandler(fileHandler);
+            logger.info("Starting a server module...");
+        } catch (BindException bindException) {
+            logger.severe("Server is already running!");
+        } catch (NoSuchElementException noSuchElementException) {
+            logger.severe("Program was stopped successfully.");
+            System.exit(0);
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
+            logger.severe("Please, enter a path to XML file.");
         }
     }
 
@@ -83,7 +170,7 @@ public class UDPServer {
         address = fromClientPacket.getAddress();
         port = fromClientPacket.getPort();
         String message = new String(fromClientPacket.getData(), 0, fromClientPacket.getLength());
-        System.out.println("Received a message: '" + message + "' from the client");
+        logger.log(INFO,"Received a message: '" + message + "' from the client");
         userCommand = message.trim().split(" ", 2);
         return message;
     }
@@ -94,7 +181,7 @@ public class UDPServer {
      * @throws IOException          - receiving exception
      * @throws InterruptedException - wait exception
      */
-    public static void write(Manager collection) throws IOException, InterruptedException {
+    public static void write(FileWorker collection) throws IOException, InterruptedException {
         String answer;
         if (userCommand.length == 1) {
             answer = easyExecution(userCommand[0], collection);
@@ -111,29 +198,29 @@ public class UDPServer {
      *
      * @return - String description of command
      */
-    public static String easyExecution(String firstArg, Manager manager) {
+    public static String easyExecution(String firstArg, FileWorker fileWorker) {
         String answer;
         switch (firstArg) {
             case "":
                 answer = "";
                 break;
             case "help":
-                answer = new Help().action(manager);
+                answer = new Help().action(fileWorker);
                 break;
             case "info":
-                answer = new Info().action(manager);
+                answer = new Info().action(fileWorker);
                 break;
             case "show":
-                answer = new Show().action(manager);
+                answer = new Show().action(fileWorker);
                 break;
             case "exit":
-                answer = new Exit().action(manager);
+                answer = new Exit().action(fileWorker);
                 break;
             case "clear":
-                answer = new Clear().action(manager);
+                answer = new Clear().action(fileWorker);
                 break;
             case "group_counting_by_coordinates":
-                answer = new GroupCountingByCoordinates().action(manager);
+                answer = new GroupCountingByCoordinates().action(fileWorker);
                 break;
             case "insert":
                 return "Please, enter number_of_key.";
@@ -165,58 +252,58 @@ public class UDPServer {
      *
      * @return - String description of command
      */
-    public static String hardExecution(String firstArg, String secondArg, Manager manager) {
+    public static String hardExecution(String firstArg, String secondArg, FileWorker fileWorker) {
         String answer;
         switch (firstArg) {
             case "":
                 answer = "";
                 break;
             case "help":
-                answer = new Help().action(manager);
+                answer = new Help().action(fileWorker);
                 break;
             case "info":
-                answer = new Info().action(manager);
+                answer = new Info().action(fileWorker);
                 break;
             case "show":
-                answer = new Show().action(manager);
+                answer = new Show().action(fileWorker);
                 break;
             case "exit":
-                answer = new Exit().action(manager);
+                answer = new Exit().action(fileWorker);
                 break;
             case "clear":
-                answer = new Clear().action(manager);
+                answer = new Clear().action(fileWorker);
                 break;
             case "group_counting_by_coordinates":
-                answer = new GroupCountingByCoordinates().action(manager);
+                answer = new GroupCountingByCoordinates().action(fileWorker);
                 break;
             case "insert":
-                answer = new Insert().action(secondArg, manager);
+                answer = new Insert().action(secondArg, fileWorker);
                 break;
             case "update":
-                answer = new Update().action(secondArg, manager);
+                answer = new Update().action(secondArg, fileWorker);
                 break;
             case "remove_key":
-                answer = new RemoveKey().action(secondArg, manager);
+                answer = new RemoveKey().action(secondArg, fileWorker);
                 break;
             case "execute_script":
-                Manager.getPaths().add(secondArg.toLowerCase());
-                answer = new ExecuteScript().action(secondArg, manager);
-                Manager.getPaths().clear();
+                FileWorker.getPaths().add(secondArg.toLowerCase());
+                answer = new ExecuteScript().action(secondArg, fileWorker);
+                FileWorker.getPaths().clear();
                 break;
             case "remove_greater":
-                answer = new RemoveGreater().action(secondArg, manager);
+                answer = new RemoveGreater().action(secondArg, fileWorker);
                 break;
             case "replace_if_greater":
-                answer = new ReplaceIfGreater().action(secondArg, manager);
+                answer = new ReplaceIfGreater().action(secondArg, fileWorker);
                 break;
             case "remove_greater_key":
-                answer = new RemoveGreaterKey().action(secondArg, manager);
+                answer = new RemoveGreaterKey().action(secondArg, fileWorker);
                 break;
             case "filter_by_chapter":
-                answer = new FilterByChapter().action(secondArg, manager);
+                answer = new FilterByChapter().action(secondArg, fileWorker);
                 break;
             case "filter_starts_with_name":
-                answer = new FilterStartsWithName().action(secondArg, manager);
+                answer = new FilterStartsWithName().action(secondArg, fileWorker);
                 break;
             default:
                 answer = "Unknown command. Write 'help' for reference.";
