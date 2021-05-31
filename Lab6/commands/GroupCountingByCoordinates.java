@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 import data.SpaceMarine;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ public class GroupCountingByCoordinates extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(Manager collection) {
+    public String action(FileWorker collection) {
         StringBuilder message = new StringBuilder();
         Map<String, Integer> cords = new HashMap<>();
         for (SpaceMarine spaceMarine : collection.getSpaceMarines().values()) {
@@ -31,6 +31,9 @@ public class GroupCountingByCoordinates extends Command {
         for (Map.Entry<String, Integer> cord : cords.entrySet()) {
             message.append("Elements with coordinates " + cord.getKey() + " : ");
             message.append(cord.getValue() + "\n");
+        }
+        if (collection.getSpaceMarines().isEmpty()) {
+            message.append("Collection is empty.");
         }
         return message.toString();
     }
