@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 
 /**
  * @author Kirill Vorobyev
@@ -18,11 +18,11 @@ abstract public class Command {
         return null;
     }
     /** Method for commands execution */
-    public Object action(Manager m) {
+    public Object action(FileWorker m) {
         return null;
     }
     /** Method for commands execution */
-    public Object action(String s, Manager m) {
+    public Object action(String s, FileWorker m) {
         return null;
     }
 }
