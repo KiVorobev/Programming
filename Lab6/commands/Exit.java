@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 
 /**
  * Class of command 'exit'
@@ -15,7 +15,7 @@ public class Exit extends Command {
      * @param collection collection
      * @return String phrase for close client
      */
-    public String action(Manager collection){
+    public String action(FileWorker collection){
         collection.save();
         return "Program will be finished now. See you again:)";
     }
