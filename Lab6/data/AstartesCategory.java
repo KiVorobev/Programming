@@ -8,5 +8,5 @@ package data;
 public enum AstartesCategory {
     ASSAULT,
     TACTICAL,
-    CHAPLAIN;
+    CHAPLAIN
 }
