@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 
 /**
  * Class of command 'remove_key'
@@ -16,7 +16,7 @@ public class RemoveKey extends Command {
      * @param collection collection
      * @return - String description of command
      */
-    public String action(String in, Manager collection) {
+    public String action(String in, FileWorker collection) {
         try {
             String test = in;
             while (test.substring(0, 1).equals(" ")) {
