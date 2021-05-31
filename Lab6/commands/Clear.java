@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 
 /**
  * Class of command 'clear'
@@ -15,8 +15,8 @@ public class Clear extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(Manager collection){
-        String message = null;
+    public String action(FileWorker collection){
+        String message;
         if (collection.getSpaceMarines().isEmpty()){
             message = "Collection is clear.";
         } else {
