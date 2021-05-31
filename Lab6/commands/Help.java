@@ -1,6 +1,6 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 
 import java.util.*;
 
@@ -17,10 +17,10 @@ public class Help extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(Manager collection){
+    public String action(FileWorker collection){
         StringBuilder message = new StringBuilder();
         for (Map.Entry<String, String> entry : collection.getInfoCommands().entrySet()) {
-            message.append(entry.getKey() + entry.getValue() + "\n" + "\n");
+            message.append(entry.getKey()).append(entry.getValue()).append("\n").append("\n");
         }
         return message.toString();
     }
