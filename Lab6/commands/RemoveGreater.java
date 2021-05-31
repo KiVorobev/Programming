@@ -1,8 +1,9 @@
 package commands;
 
-import data.Manager;
+import data.FileWorker;
 import data.SpaceMarine;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,7 @@ import java.util.Set;
  * @author Kirill Vorobyev
  * @version 1.0
  */
-public class RemoveGreater extends Command {
+public class RemoveGreater extends Command implements Comparator<Integer> {
 
     /**
      * Method for executing this command
@@ -21,7 +22,7 @@ public class RemoveGreater extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(String in, Manager collection) {
+    public String action(String in, FileWorker collection) {
         String message = null;
         try {
             String test = in;
@@ -39,7 +40,7 @@ public class RemoveGreater extends Command {
             Set<Integer> keys = new HashSet<>();
             for (Map.Entry<Integer, SpaceMarine> entry : collection.getSpaceMarines().entrySet()) {
                 SpaceMarine test2 = entry.getValue();
-                if (health < test2.getHealth()) {
+                if (compare(health,test2.getHealth()) > 0){
                     keys.add(entry.getKey());
                     check = true;
                 }
@@ -64,5 +65,10 @@ public class RemoveGreater extends Command {
         }
         collection.save();
         return message;
+    }
+
+    @Override
+    public int compare(Integer health, Integer elementHealth) {
+        return elementHealth.compareTo(health);
     }
 }
