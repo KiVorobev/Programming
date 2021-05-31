@@ -71,8 +71,14 @@ public class UDPClient {
      */
     public static String write() throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter a command: ");
-        String command = scanner.nextLine();
+        String command = "";
+        while (command.equals("")){
+            System.out.print("Enter a command: ");
+            command = scanner.nextLine();
+            if (command.equals("")){
+                System.out.println("A command cannot be empty.");
+            }
+        }
         //Regular expression to match space(s)
         String regex = "\\s+";
         //Replacing the pattern with single space
@@ -89,11 +95,11 @@ public class UDPClient {
                     }
                     userCommand[1] = String.valueOf(check);
                     StringBuilder message = new StringBuilder();
-                    InputCheck inputCheck = new InputCheck();
-                    String data = inputCheck.returnDate();
-                    SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), inputCheck.scanName(),
-                            inputCheck.scanCoordinates(), data, inputCheck.scanHealth(), inputCheck.scanCategory(),
-                            inputCheck.scanWeapon(), inputCheck.scanMeleeWeapon(), inputCheck.scanChapter());
+                    InputChecker inputChecker = new InputChecker();
+                    String data = inputChecker.returnDate();
+                    SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), inputChecker.scanName(),
+                            inputChecker.scanCoordinates(), data, inputChecker.scanHealth(), inputChecker.scanCategory(),
+                            inputChecker.scanWeapon(), inputChecker.scanMeleeWeapon(), inputChecker.scanChapter());
                     message.append(userCommand[0]).append(" \n").append(newSpaceMarine.getId()).append("\n")
                             .append(newSpaceMarine.getName()).append("\n").
                             append(newSpaceMarine.getCoordinates().getXCord()).append("\n")
@@ -130,12 +136,12 @@ public class UDPClient {
                             check = Integer.parseInt(userCommand[1]);
                         }
                         userCommand[1] = String.valueOf(check);
-                        InputCheck inputCheck = new InputCheck();
+                        InputChecker inputChecker = new InputChecker();
                         StringBuilder message = new StringBuilder();
-                        String data = inputCheck.returnDate();
-                        SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), inputCheck.scanName(),
-                                inputCheck.scanCoordinates(), data, inputCheck.scanHealth(), inputCheck.scanCategory(),
-                                inputCheck.scanWeapon(), inputCheck.scanMeleeWeapon(), inputCheck.scanChapter());
+                        String data = inputChecker.returnDate();
+                        SpaceMarine newSpaceMarine = new SpaceMarine(Integer.parseInt(userCommand[1]), inputChecker.scanName(),
+                                inputChecker.scanCoordinates(), data, inputChecker.scanHealth(), inputChecker.scanCategory(),
+                                inputChecker.scanWeapon(), inputChecker.scanMeleeWeapon(), inputChecker.scanChapter());
                         message.append(userCommand[0]).append(" \n").append(newSpaceMarine.getId()).append("\n")
                                 .append(newSpaceMarine.getName()).append("\n").
                                 append(newSpaceMarine.getCoordinates().getXCord()).append("\n")
@@ -172,7 +178,7 @@ public class UDPClient {
                                 check = Integer.parseInt(userCommand[1]);
                             }
                             userCommand[1] = String.valueOf(check);
-                            InputCheck receiver = new InputCheck();
+                            InputChecker receiver = new InputChecker();
                             Integer newHealth = receiver.scanHealth();
                             StringBuilder message = new StringBuilder();
                             message.append(userCommand[0]).append(" \n").append(userCommand[1])
