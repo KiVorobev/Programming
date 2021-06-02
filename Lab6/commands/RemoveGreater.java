@@ -39,8 +39,7 @@ public class RemoveGreater extends Command implements Comparator<Integer> {
             boolean check = false;
             Set<Integer> keys = new HashSet<>();
             for (Map.Entry<Integer, SpaceMarine> entry : collection.getSpaceMarines().entrySet()) {
-                SpaceMarine test2 = entry.getValue();
-                if (compare(health,test2.getHealth()) > 0){
+                if (compare(health,entry.getValue().getHealth()) > 0){
                     keys.add(entry.getKey());
                     check = true;
                 }
