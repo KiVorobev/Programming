@@ -4,14 +4,10 @@ import data.SpaceMarine;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.BindException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.TreeMap;
+import java.net.*;
+import java.util.*;
 import java.util.logging.*;
+import java.util.logging.Formatter;
 
 import static java.util.logging.Level.*;
 
@@ -44,27 +40,32 @@ public class UDPServer {
     /**
      * Array of bytes for organizing a packet for receiving data from client
      */
-    static byte[] buffer = new byte[65535];
+    private static byte[] buffer = new byte[65535];
     /**
      * Array of bytes for organizing a packet for sending answer to client
      */
-    static byte[] secondBuffer = new byte[65535];
+    private static byte[] secondBuffer = new byte[65535];
     /**
      * Logger
      */
-    static final Logger logger = Logger.getLogger(UDPServer.class.getName());
+    private static final Logger logger = Logger.getLogger("");
     /**
      * Buffer for collection
      */
-    static TreeMap<Integer, SpaceMarine> lastCollection = new TreeMap<>();
+    private static TreeMap<Integer, SpaceMarine> lastCollection = new TreeMap<>();
+    /**
+     * Field for storing a path to file
+     */
+    private static String pathToFile;
 
     /**
      * Server entry point
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         try {
-            connection();
-            FileWorker startFileWorker = new FileWorker(args[0]);
+            settingOfLogging();
+            pathToFile = args[0];
+            FileWorker startFileWorker = new FileWorker(pathToFile);
             if (startFileWorker.isNeedToCreate()){
                 logger.severe("Try again.");
                 System.exit(0);
@@ -74,19 +75,29 @@ public class UDPServer {
             while (true) {
                 socket = new DatagramSocket(servicePort);
                 String message = read();
-                FileWorker fileWorker = new FileWorker(args[0]);
-                if (fileWorker.isNeedToCreate()){
-                    File file = new File(args[0]);
+                FileWorker fileWorker = new FileWorker(pathToFile);
+                if (fileWorker.isNeedToCreate()) {
+                    Scanner scanner = new Scanner(System.in);
+                    while (!fileWorker.checkFile(pathToFile) || fileWorker.isNeedToRecheck()) {
+                        fileWorker.setNeedToRecheck(false);
+                        System.out.print("Enter a full path with name where the new file will be created \n" +
+                                "or name of new file: ");
+                        File file = new File(scanner.nextLine());
+                        pathToFile = file.getPath();
+                        fileWorker.setXmlFile(file);
+                        fileWorker.setSpaceMarines(lastCollection);
+                        fileWorker.save();
+                        Thread.sleep(1000);
+                    }
                     logger.info("A new file has been created in the same path.");
-                    fileWorker.setXmlFile(file);
-                    fileWorker.setSpaceMarines(lastCollection);
-                    fileWorker.save();
+                    socket.close();
+                } else {
+                    if (message != null) {
+                        write(fileWorker);
+                        lastCollection = fileWorker.getSpaceMarines();
+                    }
+                    socket.close();
                 }
-                if (message != null) {
-                    write(fileWorker);
-                    lastCollection = fileWorker.getSpaceMarines();
-                }
-                socket.close();
             }
         } catch (NoSuchElementException noSuchElementException) {
             logger.severe("Program was stopped successfully.");
@@ -103,7 +114,7 @@ public class UDPServer {
      *
      * @throws IOException - receiving exception
      */
-    public static void connection() throws IOException {
+    public static void settingOfLogging() throws IOException {
         try {
             Handler fileHandler = new FileHandler("MyLogs");
             class MyFormatter extends Formatter {
@@ -142,7 +153,7 @@ public class UDPServer {
                     }
                     return "(" + finalDay + "." + finalMonth + "." + finalYear + " " +
                             finalHours + ":" + finalMinutes + ":" + finalSeconds + ") " +
-                            record.getLevel() + " [" + record.getLoggerName() + "] : " + record.getMessage() + "\n";
+                            record.getLevel() + ": " + record.getMessage() + "\n";
                 }
             }
             fileHandler.setFormatter(new MyFormatter());
