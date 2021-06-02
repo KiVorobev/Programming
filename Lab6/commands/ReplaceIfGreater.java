@@ -29,13 +29,11 @@ public class ReplaceIfGreater extends Command {
             for (Map.Entry<Integer, SpaceMarine> entry : collection.getSpaceMarines().entrySet()) {
                 if (key == entry.getKey()) {
                     check = true;
-                    SpaceMarine test = entry.getValue();
-                    if (test.getHealth() < health) {
-                        test.setHealth(health);
-                        collection.getSpaceMarines().put(key, test);
+                    if (entry.getValue().getHealth() < health) {
+                        entry.setValue(entry.getValue()).setHealth(health);
                         collection.save();
                         message = "Health value updated successfully.";
-                    } else if (test.getHealth() == health) {
+                    } else if (entry.getValue().getHealth() == health) {
                         message = "New value is equal to old.";
                     } else {
                         message = "New value is lower than old.";
