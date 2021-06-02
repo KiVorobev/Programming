@@ -27,34 +27,38 @@ public class UDPClient {
      * Field for storing the IP-address
      */
     private static InetAddress address;
+    /**
+     * Field for switch off the client
+     */
+    private static boolean needToOff = false;
 
     /**
      * Client entry point
      */
     public static void main(String[] args) throws IOException {
         try {
-            System.out.println("                    /  /           \\  \\\n" +
-                    "                   /  /             \\  \\\n" +
-                    "    Welcome to    /  /               \\  \\        By\n" +
-                    "    Client App   /  /                 \\  \\  Kirill Vorobyev\n" +
-                    "________________/  /                   \\  \\_________________\n" +
-                    "__________________/                     \\___________________\n" +
-                    "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println("                              /  /           \\  \\\n" +
+                    "                             /  /             \\  \\\n" +
+                    "         Welcome to         /  /               \\  \\             By\n" +
+                    "         Client App        /  /                 \\  \\       Kirill Vorobyev\n" +
+                    "__________________________/  /                   \\  \\___________________________\n" +
+                    "____________________________/                     \\_____________________________\n" +
+                    "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             address = InetAddress.getByName("localhost");
             while (true) {
                 socket = new DatagramSocket();
                 String message = write();
-                if (message.equals("repeat")) {
-                    continue;
-                }
-                String answer = read();
-                // finding a phrase in a string
-                int check = answer.indexOf("Program will be finished now. See you again:)");
-                if (message.equals("exit") || check != -1) {
+                if (needToOff){
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                            "Program will be finished now. See you again:)");
                     System.exit(0);
                     socket.close();
                     break;
                 }
+                if (message.equals("repeat")) {
+                    continue;
+                }
+                read();
                 socket.close();
             }
         } catch (NoSuchElementException noSuchElementException) {
@@ -76,7 +80,9 @@ public class UDPClient {
             System.out.print("Enter a command: ");
             command = scanner.nextLine();
             if (command.equals("")){
-                System.out.println("A command cannot be empty.");
+                System.out.println("--------------------------------------------------------------------------------\n" +
+                        "A command cannot be empty.\n" +
+                        "--------------------------------------------------------------------------------");
             }
         }
         //Regular expression to match space(s)
@@ -200,6 +206,7 @@ public class UDPClient {
                     }
                 } else {
                     if (userCommand[0].equals("exit")) {
+                        needToOff = true;
                         buffer = command.getBytes();
                         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                         socket.send(packet);
