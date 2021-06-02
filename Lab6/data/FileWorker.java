@@ -30,13 +30,15 @@ public class FileWorker {
     /** Field used for storing path to file with collection */
     private String pathToFile;
     /** Field used to determine the starting state of the file */
-    boolean needToClear = false;
+    private boolean needToClear = false;
     /** Set for storing paths to files for command 'execute_script' */
-    static Set<String> paths = new HashSet<>();
+    private static Set<String> paths = new HashSet<>();
     /** Logger */
-    static final Logger logger = Logger.getLogger(FileWorker.class.getName());
+    private static final Logger logger = Logger.getLogger(FileWorker.class.getName());
     /** Field used to determine the starting state of the file */
-    boolean needToCreate = false;
+    private boolean needToCreate = false;
+    /** Field for checking a created file */
+    private boolean needToRecheck = false;
 
     {
         initializationDate = java.time.LocalDateTime.now();
@@ -220,12 +222,10 @@ public class FileWorker {
             logger.info("Collection saved successfully");
             needToClear = false;
         } catch (JAXBException jaxbException) {
-            logger.severe("Violated XML syntax. Check the file and Try again.");
+            logger.severe("Saving error. File is not found.");
+            needToRecheck = true;
         } catch (IOException ioException) {
             logger.severe("XML File does not exist.");
-        /*} catch (IllegalArgumentException illegalArgumentException){
-            // Создать новый файл, в который записать коллекцию, сообщить об этом
-            ...*/
         }
     }
 
@@ -267,5 +267,13 @@ public class FileWorker {
 
     public void setXmlFile(File xmlFile) {
         this.xmlFile = xmlFile;
+    }
+
+    public boolean isNeedToRecheck() {
+        return needToRecheck;
+    }
+
+    public void setNeedToRecheck(boolean needToRecheck) {
+        this.needToRecheck = needToRecheck;
     }
 }
