@@ -22,9 +22,6 @@ public class ExecuteScript extends Command {
             StringBuilder message = new StringBuilder();
             String[] cleanUserCommand;
             String command;
-            if (reader.readLine() == null) {
-                message.append("File is empty.");
-            } else {
                 message.append("WARNING! To avoid recursion, your file cannot contain execute script commands.\n" +
                         "-----------------------------------------------------------------------------------\n");
                 while ((command = reader.readLine()) != null) {
@@ -158,7 +155,6 @@ public class ExecuteScript extends Command {
                 }
                 reader.close();
                 message.append("Commands are ended.");
-            }
                 return message.toString();
             } catch(FileNotFoundException fileNotFoundException){
                 return "File not found. Try again.";
