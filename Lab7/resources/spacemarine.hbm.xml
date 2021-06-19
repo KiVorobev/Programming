@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="database.SpaceMarines" table="SpaceMarines">
+        <id name="id" column="id"/>
+        <property name="key" column="key"/>
+        <property name="name" column="name"/>
+        <property name="xCord" column="xcoordinate"/>
+        <property name="yCord" column="ycoordinate"/>
+        <property name="creationDate" column="creationdate"/>
+        <property name="health" column="health"/>
+        <property name="category" column="category"/>
+        <property name="weaponType" column="weapontype"/>
+        <property name="meleeWeapon" column="meleeweapon"/>
+        <property name="chapterName" column="nameofchapter"/>
+        <property name="chapterWorld" column="worldofchapter"/>
+        <property name="user" column="user"/>
+
+    </class>
+</hibernate-mapping>
