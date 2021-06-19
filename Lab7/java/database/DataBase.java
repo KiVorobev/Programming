@@ -22,11 +22,11 @@ import java.util.logging.Logger;
 
 public class DataBase {
     static final Logger logger = Logger.getLogger(DataBase.class.getName());
-    private static String url = "jdbc:postgresql://localhost:7887/studs";
+    private static String url = "jdbc:postgresql://localhost:XXXX/studs";
     private static Statement statement;
     private static Connection connection;
-    private static String username = "s312439";
-    private static String password = "gel443";
+    private static String username = "username";
+    private static String password = "password";
     private static SessionFactory factory;
     private static List<SpaceMarines> spaceMarines;
 
