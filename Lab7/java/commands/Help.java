@@ -1,8 +1,8 @@
 package commands;
 
-import data.*;
+import database.DataBase;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * Class of command 'help'
@@ -17,7 +17,7 @@ public class Help extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(FileWorker collection){
+    public String action(DataBase collection){
         StringBuilder message = new StringBuilder();
         for (Map.Entry<String, String> entry : collection.getInfoCommands().entrySet()) {
             message.append(entry.getKey()).append(entry.getValue()).append("\n").append("\n");
