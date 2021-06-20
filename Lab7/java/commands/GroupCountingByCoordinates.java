@@ -18,22 +18,26 @@ public class GroupCountingByCoordinates extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(TreeMap<Integer,SpaceMarine> collection) {
+    public String action(TreeMap<Integer, SpaceMarine> collection, String login) {
+        boolean notEmpty = false;
         StringBuilder message = new StringBuilder();
         Map<String, Integer> cords = new HashMap<>();
         for (SpaceMarine spaceMarine : collection.values()) {
-            if (cords.containsKey(spaceMarine.getCoordinates().toString())) {
-                cords.put(spaceMarine.getCoordinates().toString(),cords.get(spaceMarine.getCoordinates().toString()) + 1 );
-            } else {
-                cords.put(spaceMarine.getCoordinates().toString(), 1);
+            if (spaceMarine.getUser().equals(login)) {
+                notEmpty = true;
+                if (cords.containsKey(spaceMarine.getCoordinates().toString())) {
+                    cords.put(spaceMarine.getCoordinates().toString(), cords.get(spaceMarine.getCoordinates().toString()) + 1);
+                } else {
+                    cords.put(spaceMarine.getCoordinates().toString(), 1);
+                }
             }
         }
         for (Map.Entry<String, Integer> cord : cords.entrySet()) {
             message.append("Elements with coordinates " + cord.getKey() + " : ");
             message.append(cord.getValue() + "\n");
         }
-        if (collection.isEmpty()) {
-            message.append("Collection is empty.");
+        if (!notEmpty) {
+            message.append("Your collection is empty.");
         }
         return message.toString();
     }
