@@ -14,11 +14,14 @@ public class SpaceMarines {
     /**
      * Field ID
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id; //The value of the field must be greater than 0, and the value of this field must be unique
     //The value of this field should be generated automatically
     /**
      * Field name
      */
+
     private String name; //Field cannot be null, the string cannot be empty
     /**
      * field x
@@ -71,7 +74,7 @@ public class SpaceMarines {
      */
     public SpaceMarines(int key, int id, String name, int xcord, Integer ycord, String creationDate, Integer health,
                         AstartesCategory category, Weapon weaponType, MeleeWeapon meleeWeapon, String chaptername,
-                        String chapterworld) {
+                        String chapterworld, String user) {
         this.key = key;
         this.id = id;
         this.name = name;
@@ -84,10 +87,9 @@ public class SpaceMarines {
         this.meleeWeapon = meleeWeapon;
         this.chapterName = chaptername;
         this.chapterWorld = chapterworld;
+        this.user = user;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public int getId() {
         return id;
     }
