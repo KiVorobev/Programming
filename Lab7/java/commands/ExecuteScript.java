@@ -1,6 +1,7 @@
 package commands;
 
 import data.*;
+import database.DataBase;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -16,7 +17,7 @@ import java.util.TreeMap;
 public class ExecuteScript extends Command {
 
     /** Method for executing script from external file */
-    public String action(String nameOfFile, TreeMap<Integer,SpaceMarine> collection) {
+    public String action(String nameOfFile, TreeMap<Integer,SpaceMarine> collection, String login) {
         try {
             String[] newNameOfFile = nameOfFile.trim().split(" ", 2);
             BufferedReader reader = new BufferedReader(new FileReader(newNameOfFile[0]));
@@ -63,7 +64,7 @@ public class ExecuteScript extends Command {
                             break;
                         case "update":
                             if (cleanUserCommand.length == 2) {
-                                message.append(new Update().action(cleanUserCommand[1], collection) + "\n")
+                                message.append(new Update().action(cleanUserCommand[1], collection, login) + "\n")
                                         .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                                 + "\nCommand 'update " + cleanUserCommand[1] + "' is ended.\n" +
                                                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -71,7 +72,7 @@ public class ExecuteScript extends Command {
                             break;
                         case "remove_key":
                             if (cleanUserCommand.length == 2) {
-                                message.append(new RemoveKey().action(cleanUserCommand[1], collection) + "\n")
+                                message.append(new RemoveKey().action(cleanUserCommand[1], collection, login) + "\n")
                                         .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                                 + "\nCommand 'remove_key " + cleanUserCommand[1] + "' is ended.\n" +
                                                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -84,17 +85,17 @@ public class ExecuteScript extends Command {
                                             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                             break;
                         case "clear":
-                            message.append(new Clear().action(collection) + "\n")
+                            message.append(new Clear().action("newlogin") + "\n")
                                     .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                             + "\nCommand 'clear' is ended.\n" +
                                             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                             break;
                         case "execute_script":
                             if (cleanUserCommand.length == 2) {
-                                System.out.println(FileWorker.getPaths());
-                                if (!(FileWorker.getPaths().contains(cleanUserCommand[1].toLowerCase()))) {
-                                    FileWorker.getPaths().add(cleanUserCommand[1]);
-                                    message.append(new ExecuteScript().action(cleanUserCommand[1], collection) + "\n")
+                                System.out.println(DataBase.getPaths());
+                                if (!(DataBase.getPaths().contains(cleanUserCommand[1].toLowerCase()))) {
+                                    DataBase.getPaths().add(cleanUserCommand[1]);
+                                    message.append(new ExecuteScript().action(cleanUserCommand[1], collection, login) + "\n")
                                             .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
                                                     + "Command 'execute_script " + cleanUserCommand[1] + "' is ended.\n" +
                                                     "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -107,7 +108,7 @@ public class ExecuteScript extends Command {
                             break;
                         case "remove_greater":
                             if (cleanUserCommand.length == 2) {
-                                message.append(new RemoveGreater().action(cleanUserCommand[1], collection) + "\n")
+                                message.append(new RemoveGreater().action(cleanUserCommand[1], collection, login) + "\n")
                                         .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                                 + "\nCommand 'remove_greater " + cleanUserCommand[1] + "' is ended.\n" +
                                                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -115,7 +116,7 @@ public class ExecuteScript extends Command {
                             break;
                         case "replace_if_greater":
                             if (cleanUserCommand.length == 2) {
-                                message.append(new ReplaceIfGreater().action(cleanUserCommand[1], collection) + "\n")
+                                message.append(new ReplaceIfGreater().action(cleanUserCommand[1], collection, login) + "\n")
                                         .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                                 + "\nCommand 'replace_if_greater " + cleanUserCommand[1] + "' is ended.\n" +
                                                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -123,21 +124,21 @@ public class ExecuteScript extends Command {
                             break;
                         case "remove_greater_key":
                             if (cleanUserCommand.length == 2) {
-                                message.append(new RemoveGreaterKey().action(cleanUserCommand[1], collection) + "\n")
+                                message.append(new RemoveGreaterKey().action(cleanUserCommand[1], collection, login) + "\n")
                                         .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                                 + "\nCommand 'remove_greater_key " + cleanUserCommand[1] + "' is ended.\n" +
                                                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                             } else message.append("This command needs an argument.\n");
                             break;
                         case "group_counting_by_coordinates":
-                            message.append(new GroupCountingByCoordinates().action(collection) + "\n")
+                            message.append(new GroupCountingByCoordinates().action(collection,login) + "\n")
                                     .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                             + "\nCommand 'group_counting_by_coordinates' is ended.\n" +
                                             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                             break;
                         case "filter_by_chapter":
                             if (cleanUserCommand.length == 2) {
-                                message.append(new FilterByChapter().action(cleanUserCommand[1], collection) + "\n")
+                                message.append(new FilterByChapter().action(cleanUserCommand[1], collection, login) + "\n")
                                         .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                                 + "\nCommand 'filter_by_chapter " + cleanUserCommand[1] + "' is ended.\n" +
                                                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -145,7 +146,7 @@ public class ExecuteScript extends Command {
                             break;
                         case "filter_starts_with_name":
                             if (cleanUserCommand.length == 2) {
-                                message.append(new FilterStartsWithName().action(cleanUserCommand[1], collection) + "\n")
+                                message.append(new FilterStartsWithName().action(cleanUserCommand[1], collection, login) + "\n")
                                         .append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
                                                 + "\nCommand 'filter_starts_with_name " + cleanUserCommand[1] + "' is ended.\n" +
                                                 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
