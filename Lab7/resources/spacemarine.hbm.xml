@@ -8,17 +8,28 @@
     <class name="database.SpaceMarines" table="SpaceMarines">
         <id name="id" column="id"/>
         <property name="key" column="key"/>
+        <property name="user" column="username"/>
         <property name="name" column="name"/>
-        <property name="xCord" column="xcoordinate"/>
-        <property name="yCord" column="ycoordinate"/>
-        <property name="creationDate" column="creationdate"/>
+        <property name="xCord" column="x_coordinate"/>
+        <property name="yCord" column="y_coordinate"/>
+        <property name="creationDate" column="creation_date"/>
         <property name="health" column="health"/>
-        <property name="category" column="category"/>
-        <property name="weaponType" column="weapontype"/>
-        <property name="meleeWeapon" column="meleeweapon"/>
-        <property name="chapterName" column="nameofchapter"/>
-        <property name="chapterWorld" column="worldofchapter"/>
-        <property name="user" column="user"/>
-
+        <property name="category" column="category">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">data.AstartesCategory</param>
+            </type>
+        </property>
+        <property name="weaponType" column="weapon_type">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">data.Weapon</param>
+            </type>
+        </property>
+        <property name="meleeWeapon" column="melee_weapon">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">data.MeleeWeapon</param>
+            </type>
+        </property>
+        <property name="chapterName" column="name_of_chapter"/>
+        <property name="chapterWorld" column="world_of_chapter"/>
     </class>
 </hibernate-mapping>
