@@ -1,7 +1,13 @@
 package commands;
 
 import data.*;
+import database.HibernateSessionFactoryUtil;
+import database.SpaceMarines;
+import database.SpaceMarinesDao;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -18,9 +24,10 @@ public class Update extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(String element, TreeMap<Integer,SpaceMarine> collection) {
+    public String action(String element, TreeMap<Integer,SpaceMarine> collection, String login) {
+        String message = null;
         try {
-            String[] newElement = element.trim().split("\n", 11);
+            String[] newElement = element.trim().split("\n", 12);
             Coordinates newCord = new Coordinates(Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]));
             AstartesCategory newCat = null;
             Weapon newWeapon = null;
@@ -36,27 +43,56 @@ public class Update extends Command {
             }
             Chapter newChap = new Chapter(newElement[9], newElement[10]);
             int id = Integer.parseInt(newElement[0]);
-            boolean check = false;
-            for (SpaceMarine spaceMarine : collection.values()) {
-                if (id == spaceMarine.getId()) {
-                    spaceMarine.setName(newElement[1]);
-                    spaceMarine.setCoordinates(newCord);
-                    spaceMarine.setCreationDate(newElement[4]);
-                    spaceMarine.setHealth(Integer.parseInt(newElement[5]));
-                    spaceMarine.setCategory(newCat);
-                    spaceMarine.setWeaponType(newWeapon);
-                    spaceMarine.setMeleeWeapon(newMelee);
-                    spaceMarine.setChapter(newChap);
-                    check = true;
+
+            SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
+            boolean exist = false;
+            boolean updated = false;
+            List<SpaceMarines> list = null;
+            try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+                session.beginTransaction();
+
+                Query query = session.createQuery("from SpaceMarines");
+                list = (List<SpaceMarines>) query.list();
+
+                session.getTransaction().commit();
+            } catch (Throwable cause) {
+                cause.printStackTrace();
+            }
+            for (SpaceMarines spaceMarines : list) {
+                if (spaceMarines.getId() == id) {
+                    exist = true;
+                    if (spaceMarines.getUser().equals(login)){
+                        updated = true;
+                        SpaceMarines newSpaceMarine = new SpaceMarines(spaceMarines.getKey(), id, newElement[1],
+                                Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]), 
+                                spaceMarines.getCreationDate(), Integer.parseInt(newElement[5]), newCat, newWeapon,
+                                newMelee, newElement[9], newElement[10], newElement[11]);
+                        spaceMarinesDao.delete(spaceMarines);
+                        spaceMarinesDao.save(newSpaceMarine);
+                    }
                 }
             }
-            if (!check) {
-                return "An element with this id does not exist.";
-            } else {
-                return "Element updated successfully.";
-            }
+            
+            if (!exist) message = "An element with this id does not exist.";
+            if (exist && !updated) message = "You don't have permission to access this element.";
+                if (updated) {
+                    for (SpaceMarine spaceMarine : collection.values()) {
+                        if (id == spaceMarine.getId()) {
+                            spaceMarine.setName(newElement[1]);
+                            spaceMarine.setCoordinates(newCord);
+                            spaceMarine.setHealth(Integer.parseInt(newElement[5]));
+                            spaceMarine.setCategory(newCat);
+                            spaceMarine.setWeaponType(newWeapon);
+                            spaceMarine.setMeleeWeapon(newMelee);
+                            spaceMarine.setChapter(newChap);
+                            spaceMarine.setUser(newElement[11]);
+                            message = "Element updated successfully.";
+                        }
+                    }
+                }
         } catch (NumberFormatException numberFormatException) {
-            return "Argument must be of type integer. Try again.";
+            message = "Argument must be of type integer. Try again.";
         }
+        return message;
     }
 }
