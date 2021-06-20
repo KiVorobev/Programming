@@ -15,20 +15,57 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class DataBase {
     static final Logger logger = Logger.getLogger(DataBase.class.getName());
-    private static String url = "jdbc:postgresql://localhost:XXXX/studs";
+    private static String url = "jdbc:postgresql://localhost:7887/studs";
     private static Statement statement;
     private static Connection connection;
-    private static String username = "username";
-    private static String password = "password";
+    private static String username = "s312439";
+    private static String password = "gel443";
     private static SessionFactory factory;
-    private static List<SpaceMarines> spaceMarines;
+    /** Field for saving date of initialization the collection */
+    private static java.time.LocalDateTime initializationDate;
+    /** HashMap collection for making a manual */
+    private static HashMap<String, String> infoCommands;
+    /** Set for storing paths to files for command 'execute_script' */
+    private static Set<String> paths = new HashSet<>();
+    {
+        // Making a manual
+        infoCommands = new HashMap<>();
+        infoCommands.put("help", "                             - Display help for available commands");
+        infoCommands.put("info", "                             - Output collection information to the standard\n" +
+                "                                   output stream");
+        infoCommands.put("show", "                             - Output all elements of the collection in a\n" +
+                "                                   string representation to the standard output\n" +
+                "                                   stream");
+        infoCommands.put("insert number_of_key", "             - Add a new element with the specified key");
+        infoCommands.put("update id", "                        - Update the values of a collection element whose\n" +
+                "                                   id is equal to the specified one");
+        infoCommands.put("remove_key number_of_key", "         - Delete an item from the collection by its key");
+        infoCommands.put("clear", "                            - Clear the collection");
+        infoCommands.put("execute_script file_name", "         - Read and execute the script from the specified\n" +
+                "                                   file");
+        infoCommands.put("exit", "                             - End the program");
+        infoCommands.put("remove_greater value_of_health", "   - Remove all items from the collection that exceed\n" +
+                "                                   the specified limit");
+        infoCommands.put("replace_if_greater number_of_key", " - Replace the value by key if the new value is\n" +
+                "                                   greater than the old one");
+        infoCommands.put("remove_greater_key number_of_key", " - Remove all items from the collection whose key\n" +
+                "                                   exceeds the specified value");
+        infoCommands.put("group_counting_by_coordinates", "    - Group the collection items by the coordinates\n" +
+                "                                   field value, output the number of items in each\n" +
+                "                                   group");
+        infoCommands.put("filter_by_chapter chapter_name", "   - Output elements whose chapter field value is\n" +
+                "                                   equal to the specified value");
+        infoCommands.put("filter_starts_with_name name", "     - Output elements whose name field value starts\n" +
+                "                                   with the specified substring");
+    }
+
+    public DataBase(){}
 
     public DataBase(SessionFactory factory) {
         this.factory = factory;
@@ -42,13 +79,14 @@ public class DataBase {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public static void connect(TreeMap<Integer, SpaceMarine> collection) throws SQLException, ClassNotFoundException {
-        factory = new Configuration().configure().buildSessionFactory();
-        Class.forName("org.postgresql.Driver");
-        connection = DriverManager.getConnection(url, username, password);
-        logger.info("Database connection established.");
-        statement = connection.createStatement();
-        loadCollection(collection);
+    public void connect(TreeMap<Integer, SpaceMarine> collection) throws SQLException, ClassNotFoundException {
+            factory = new Configuration().configure().buildSessionFactory();
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection(url, username, password);
+            statement = connection.createStatement();
+            loadCollection(collection);
+            initializationDate = java.time.LocalDateTime.now();
+            logger.info("Database connection established.");
     }
 
     /**
@@ -69,7 +107,8 @@ public class DataBase {
      *
      * @param collection collection
      */
-    public static void loadCollection(TreeMap<Integer, SpaceMarine> collection){
+    public void loadCollection(TreeMap<Integer, SpaceMarine> collection){
+        collection.clear();
         SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
         List<SpaceMarines> collect = new ArrayList<SpaceMarines>(spaceMarinesDao.findAll()) {
         };
@@ -111,10 +150,9 @@ public class DataBase {
                 }
             }
         }
-        UserService userService = new UserService();
-        System.out.println(MD5(password));
+        UserDao userDao = new UserDao();
         User user = new User(login, MD5(password));
-        userService.saveUser(user);
+        userDao.save(user);
         return "You have successfully registered.";
     }
 
@@ -169,5 +207,29 @@ public class DataBase {
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static LocalDateTime getInitializationDate() {
+        return initializationDate;
+    }
+
+    public void setInitializationDate(LocalDateTime initializationDate) {
+        this.initializationDate = initializationDate;
+    }
+
+    public static Set<String> getPaths() {
+        return paths;
+    }
+
+    public static void setPaths(Set<String> paths) {
+        DataBase.paths = paths;
+    }
+
+    public static HashMap<String, String> getInfoCommands() {
+        return infoCommands;
+    }
+
+    public static void setInfoCommands(HashMap<String, String> infoCom) {
+        infoCommands = infoCom;
     }
 }
