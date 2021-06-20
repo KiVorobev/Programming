@@ -1,6 +1,7 @@
 package commands;
 
-import data.*;
+import database.DataBase;
+
 /**
  * @author Kirill Vorobyev
  * @version 1.0
@@ -17,11 +18,11 @@ abstract public class Command {
         return null;
     }
     /** Method for commands execution */
-    public Object action(FileWorker m) {
+    public Object action(DataBase m) {
         return null;
     }
     /** Method for commands execution */
-    public Object action(String s, FileWorker m) {
+    public Object action(String s, DataBase m) {
         return null;
     }
 }
