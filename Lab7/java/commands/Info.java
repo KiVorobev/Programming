@@ -1,6 +1,10 @@
 package commands;
 
-import data.*;
+import data.SpaceMarine;
+import database.DataBase;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Class of command 'info'
@@ -15,9 +19,17 @@ public class Info extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(FileWorker collection) {
-        return "Collection Type: " + collection.getSpaceMarines().getClass() +
-                "\nInitialization date: " + collection.getInitializationDate() +
-                "\nAmount of elements: " + collection.getSpaceMarines().size();
+    public String action(TreeMap<Integer, SpaceMarine> collection, String login) {
+        int userCollection = 0;
+        for (Map.Entry<Integer,SpaceMarine> entry : collection.entrySet()){
+            if (entry.getValue().getUser().equals(login)){
+                userCollection += 1;
+            }
+        }
+
+        return "Collection Type: " + collection.getClass() +
+                "\nInitialization date: " + DataBase.getInitializationDate() +
+                "\nAmount of elements: " + collection.size() +
+                "\nAmount of your elements: " + userCollection;
     }
 }
