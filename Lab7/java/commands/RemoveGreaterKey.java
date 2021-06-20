@@ -1,11 +1,13 @@
 package commands;
 
 import data.*;
+import database.HibernateSessionFactoryUtil;
+import database.SpaceMarines;
+import database.SpaceMarinesDao;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Class of command 'remove_greater_key'
@@ -21,7 +23,7 @@ public class RemoveGreaterKey extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(String in, TreeMap<Integer,SpaceMarine> collection) {
+    public String action(String in, TreeMap<Integer,SpaceMarine> collection, String login) {
         String message = null;
         try {
             String test = in;
@@ -34,29 +36,57 @@ public class RemoveGreaterKey extends Command {
             } else {
                 key = Integer.parseInt(test);
             }
-            int counter = 0;
-            boolean check = false;
-            Set<Integer> keys = new HashSet<>();
-            for (Map.Entry<Integer, SpaceMarine> entry : collection.entrySet()) {
-                if (key < entry.getKey()) {
-                    keys.add(entry.getKey());
-                    check = true;
+
+            SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
+            List<SpaceMarines> list = null;
+            boolean deleted = false;
+            boolean exists = false;
+            try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+                session.beginTransaction();
+
+                Query query = session.createQuery("from SpaceMarines");
+                list = (List<SpaceMarines>) query.list();
+
+                session.getTransaction().commit();
+            } catch (Throwable cause) {
+                cause.printStackTrace();
+            }
+            for (SpaceMarines spaceMarines : list) {
+                if (spaceMarines.getUser().equals(login)) {
+                    exists = true;
+                    if (spaceMarines.getKey() > key) {
+                        spaceMarinesDao.delete(spaceMarines);
+                        deleted = true;
+                    }
                 }
             }
-            if (check) {
-                for (Integer last : keys) {
-                    counter += 1;
-                    collection.remove(last);
+            if (!exists)  message = "Your collection is empty.";
+            if (exists && !deleted) message = "There are no elements in the collection that greater the specified one.";
+            if (deleted) {
+                int counter = 0;
+                boolean check = false;
+                Set<Integer> keys = new HashSet<>();
+                for (Map.Entry<Integer, SpaceMarine> entry : collection.entrySet()) {
+                    if (key < entry.getKey() && entry.getValue().getUser().equals(login)) {
+                        keys.add(entry.getKey());
+                        check = true;
+                    }
                 }
-            }
-            if (counter == 0) {
-                message = "There are no elements in the collection that exceed the specified one.";
-            }
-            if (counter == 1) {
-                message = "1 element removed successfully.";
-            }
-            if (counter > 1) {
-                message = counter + " elements removed successfully.";
+                if (check) {
+                    for (Integer last : keys) {
+                        counter += 1;
+                        collection.remove(last);
+                    }
+                }
+                if (counter == 0) {
+                    message = "There are no elements in the collection that greater the specified one.";
+                }
+                if (counter == 1) {
+                    message = "1 element removed successfully.";
+                }
+                if (counter > 1) {
+                    message = counter + " elements removed successfully.";
+                }
             }
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
             message = "Argument must be of type integer. Try again.";
