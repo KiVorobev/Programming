@@ -1,6 +1,13 @@
 package commands;
 
 import data.*;
+import database.HibernateSessionFactoryUtil;
+import database.SpaceMarines;
+import database.SpaceMarinesDao;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -17,7 +24,8 @@ public class RemoveKey extends Command {
      * @param collection collection
      * @return - String description of command
      */
-    public String action(String in, TreeMap<Integer,SpaceMarine> collection) {
+    public String action(String in, TreeMap<Integer,SpaceMarine> collection, String login) {
+        StringBuilder message = new StringBuilder();
         try {
             String test = in;
             while (test.substring(0, 1).equals(" ")) {
@@ -29,14 +37,40 @@ public class RemoveKey extends Command {
             } else {
                 key = Integer.parseInt(test);
             }
-            if (collection.containsKey(key)) {
+
+            SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
+            List<SpaceMarines> list = null;
+            boolean exists = false;
+            boolean deleted = false;
+            try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+                session.beginTransaction();
+
+                Query query = session.createQuery("from SpaceMarines");
+                list = (List<SpaceMarines>) query.list();
+
+                session.getTransaction().commit();
+            } catch (Throwable cause) {
+                cause.printStackTrace();
+            }
+            for (SpaceMarines spaceMarines : list) {
+                if (spaceMarines.getKey() == key){
+                    exists = true;
+                    if (spaceMarines.getUser().equals(login)){
+                        spaceMarinesDao.delete(spaceMarines);
+                        deleted = true;
+                    } else message.append("You don't have permission to access this element.");
+                }
+            }
+            if (deleted){
                 collection.remove(key);
-                return "Element deleted successfully.";
-            } else {
-                return "An element with this key does not exist.";
+                message.append("Element removed successfully.");
+            }
+            if (!exists){
+                message.append ("An element with this key does not exist.");
             }
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
-            return "Argument must be of type integer. Try again.";
+            message.append("Argument must be of type integer. Try again.");
         }
+        return message.toString();
     }
 }
