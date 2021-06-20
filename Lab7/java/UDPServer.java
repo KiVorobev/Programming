@@ -1,8 +1,8 @@
 import commands.*;
-import data.FileWorker;
 import data.SpaceMarine;
 import database.DataBase;
 
+import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.DatagramPacket;
@@ -53,13 +53,16 @@ public class UDPServer {
      */
     private static final Logger logger = Logger.getLogger("");
     /**
-     * Collection
+     * TreeMap collection for keeping a collection as java-object
      */
-    private static final TreeMap<Integer, SpaceMarine> collection = new TreeMap<>();
+    private static TreeMap<Integer, SpaceMarine> spaceMarines = new TreeMap<>();
     /**
      * User login
      */
     private static String clientLogin;
+    /**
+     * Field for check the user's authorisation status
+     */
     private static boolean isAuthorisated;
 
     /**
@@ -67,9 +70,10 @@ public class UDPServer {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         try {
+            DataBase dataBase = new DataBase();
             settingOfLogging();
             socket = new DatagramSocket(servicePort);
-            DataBase.connect(collection);
+            dataBase.connect(spaceMarines);
             logger.info("Server started.");
             socket.close();
             while (true) {
@@ -79,7 +83,12 @@ public class UDPServer {
                 if (isAuthorisated) {
                     String message = read();
                     if (message != null) {
-                        write();
+                        String forLoad = write();
+                        if (forLoad.equals("Element added successfully.") || forLoad.equals("Your collection successfully cleared.")
+                        || forLoad.contains("removed successfully.") || forLoad.equals("Health value updated successfully.")
+                        || forLoad.equals("Element updated successfully.")){
+                            dataBase.loadCollection(spaceMarines);
+                        }
                     }
                     if (message.equals("exit")) clientLogin = null;
                 }
@@ -90,10 +99,12 @@ public class UDPServer {
             System.exit(0);
         } catch(BindException bindException){
             logger.severe("Server is already running!");
-        } catch (SQLException sqlException) {
+        } catch (SQLException SQLException) {
             logger.severe("Failed to connect to database. Shutdown.");
         } catch (ClassNotFoundException classNotFoundException) {
             logger.severe("Class not found.");
+        } catch (PersistenceException persistenceException) {
+            logger.severe("Failed to connect to database. Shutdown.");
         }
     }
 
@@ -105,7 +116,7 @@ public class UDPServer {
     public static void authorisation() throws InterruptedException {
         while (true) {
             try {
-                String answer = "Bye.";
+                String answer;
                 boolean needToBreak = false;
                 String[] fields = read().split(" ");
                 if (fields.length == 3) {
@@ -222,7 +233,7 @@ public class UDPServer {
      * @throws IOException          - receiving exception
      * @throws InterruptedException - wait exception
      */
-    public static void write() throws IOException, InterruptedException {
+    public static String write() throws IOException, InterruptedException {
             String answer = " ";
             try {
                 if (userCommand.length == 3) {
@@ -239,6 +250,7 @@ public class UDPServer {
             } catch (IOException ignored) {
                 logger.severe("Sending answer error.");
             }
+            return answer;
     }
 
     /**
@@ -250,22 +262,22 @@ public class UDPServer {
         String answer;
         switch (firstArg) {
             case "help":
-                answer = new Help().action();
+                answer = new Help().action(new DataBase());
                 break;
             case "info":
-                answer = new Info().action();
+                answer = new Info().action(spaceMarines, clientLogin);
                 break;
             case "show":
-                answer = new Show().action(collection);
+                answer = new Show().action(spaceMarines);
                 break;
             case "exit":
-                answer = new Exit().action();
+                answer = new Exit().action(spaceMarines);
                 break;
             case "clear":
-                answer = new Clear().action();
+                answer = new Clear().action(spaceMarines, clientLogin);
                 break;
             case "group_counting_by_coordinates":
-                answer = new GroupCountingByCoordinates().action();
+                answer = new GroupCountingByCoordinates().action(spaceMarines, clientLogin);
                 break;
             default:
                 answer = "Unknown command. Write 'help' for reference.";
@@ -283,38 +295,45 @@ public class UDPServer {
         String answer;
         switch (firstArg) {
             case "insert":
-                answer = new Insert().action(secondArg, collection);
+                answer = new Insert().action(secondArg, spaceMarines);
                 break;
             case "update":
-                answer = new Update().action(secondArg, collection);
+                answer = new Update().action(secondArg, spaceMarines, clientLogin);
                 break;
             case "remove_key":
-                answer = new RemoveKey().action(secondArg, collection);
+                answer = new RemoveKey().action(secondArg, spaceMarines, clientLogin);
                 break;
             case "execute_script":
-                FileWorker.getPaths().add(secondArg.toLowerCase());
-                answer = new ExecuteScript().action(secondArg, collection);
-                FileWorker.getPaths().clear();
+                DataBase.getPaths().add(secondArg.toLowerCase());
+                answer = new ExecuteScript().action(secondArg, spaceMarines, clientLogin);
+                DataBase.getPaths().clear();
                 break;
             case "remove_greater":
-                answer = new RemoveGreater().action(secondArg, collection);
+                answer = new RemoveGreater().action(secondArg, spaceMarines, clientLogin);
                 break;
             case "replace_if_greater":
-                answer = new ReplaceIfGreater().action(secondArg, collection);
+                answer = new ReplaceIfGreater().action(secondArg, spaceMarines, clientLogin);
                 break;
             case "remove_greater_key":
-                answer = new RemoveGreaterKey().action(secondArg, collection);
+                answer = new RemoveGreaterKey().action(secondArg, spaceMarines, clientLogin);
                 break;
             case "filter_by_chapter":
-                answer = new FilterByChapter().action(secondArg, collection);
+                answer = new FilterByChapter().action(secondArg, spaceMarines, clientLogin);
                 break;
             case "filter_starts_with_name":
-                answer = new FilterStartsWithName().action(secondArg, collection);
+                answer = new FilterStartsWithName().action(secondArg, spaceMarines, clientLogin);
                 break;
             default:
                 answer = "Unknown command. Write 'help' for reference.";
                 break;
         }
         return answer;
+    }
+    public TreeMap<Integer, SpaceMarine> getSpaceMarines() {
+        return spaceMarines;
+    }
+
+    public void setSpaceMarines(TreeMap<Integer, SpaceMarine> spaceMarines) {
+        this.spaceMarines = spaceMarines;
     }
 }
