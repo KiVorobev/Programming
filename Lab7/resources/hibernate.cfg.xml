@@ -3,8 +3,8 @@
     <session-factory>
         <property name="connection.url">jdbc:postgresql://localhost:XXXX/studs</property>
         <property name="connection.driver_class">org.postgresql.Driver</property>
-        <property name="connection.username">login</property>
-        <property name="connection.password">password</property>
+        <property name="connection.username">*******</property>
+        <property name="connection.password">*******</property>
         <property name="dialect">org.hibernate.dialect.PostgreSQL94Dialect</property>
         <property name="show_sql">true</property>
 
