@@ -244,11 +244,13 @@ public class UDPClient {
                         } else {
                             if (userCommand[0].equals("filter_by_chapter")) {
                                 if (userCommand.length == 2) {
+                                    StringBuilder message = new StringBuilder();
+                                    message.append(userCommand[0]).append(" ").append(userCommand[1]);
                                     logBuffer = autoLog.getBytes();
                                     DatagramPacket autoPacket = new DatagramPacket(logBuffer, logBuffer.length, address, servicePort);
                                     socket.send(autoPacket);
                                     TimeUnit.MILLISECONDS.sleep(100);
-                                    buffer = userCommand.toString().getBytes();
+                                    buffer = message.toString().getBytes();
                                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                                     socket.send(packet);
                                 } else {
@@ -260,10 +262,12 @@ public class UDPClient {
                             } else {
                                 if (userCommand[0].equals("filter_starts_with_name")) {
                                     if (userCommand.length == 2) {
+                                        StringBuilder message = new StringBuilder();
+                                        message.append(userCommand[0]).append(" ").append(userCommand[1]);
                                         logBuffer = autoLog.getBytes();
                                         DatagramPacket autoPacket = new DatagramPacket(logBuffer, logBuffer.length, address, servicePort);
                                         socket.send(autoPacket);
-                                        buffer = userCommand.toString().getBytes();
+                                        buffer = message.toString().getBytes();
                                         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                                         socket.send(packet);
                                     } else {
@@ -275,7 +279,7 @@ public class UDPClient {
                                 } else {
                                     if (userCommand[0].equals("remove_greater")) {
                                         if (userCommand.length == 2) {
-                                            String message = null;
+                                            StringBuilder message = new StringBuilder();
                                             try {
                                                 String test = userCommand[1];
                                                 while (test.substring(0, 1).equals(" ")) {
@@ -287,10 +291,11 @@ public class UDPClient {
                                                 } else {
                                                     health = Integer.parseInt(test);
                                                 }
+                                                message.append(userCommand[0]).append(" ").append(health);
                                                 logBuffer = autoLog.getBytes();
                                                 DatagramPacket autoPacket = new DatagramPacket(logBuffer, logBuffer.length, address, servicePort);
                                                 socket.send(autoPacket);
-                                                buffer = userCommand.toString().getBytes();
+                                                buffer = message.toString().getBytes();
                                                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                                                 socket.send(packet);
                                             } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
@@ -299,15 +304,16 @@ public class UDPClient {
                                                         "--------------------------------------------------------------------------------");
                                                 command = "repeat";
                                             }
+                                        } else {
+                                            System.out.println("--------------------------------------------------------------------------------\n" +
+                                                    "Please, enter value_of_health.\n" +
+                                                    "--------------------------------------------------------------------------------");
+                                            command = "repeat";
                                         }
-                                        System.out.println("--------------------------------------------------------------------------------\n" +
-                                                "Please, enter value_of_health.\n" +
-                                                "--------------------------------------------------------------------------------");
-                                        command = "repeat";
                                     } else {
                                         if (userCommand[0].equals("remove_greater_key") || userCommand[0].equals("remove_key")) {
                                             if (userCommand.length == 2) {
-                                                String message = null;
+                                                StringBuilder message = new StringBuilder();
                                                 try {
                                                     String test = userCommand[1];
                                                     while (test.substring(0, 1).equals(" ")) {
@@ -319,10 +325,11 @@ public class UDPClient {
                                                     } else {
                                                         key = Integer.parseInt(test);
                                                     }
+                                                    message.append(userCommand[0]).append(" ").append(key);
                                                     logBuffer = autoLog.getBytes();
                                                     DatagramPacket autoPacket = new DatagramPacket(logBuffer, logBuffer.length, address, servicePort);
                                                     socket.send(autoPacket);
-                                                    buffer = userCommand.toString().getBytes();
+                                                    buffer = message.toString().getBytes();
                                                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                                                     socket.send(packet);
                                                 } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
@@ -331,18 +338,21 @@ public class UDPClient {
                                                             "--------------------------------------------------------------------------------");
                                                     command = "repeat";
                                                 }
+                                            } else {
+                                                System.out.println("--------------------------------------------------------------------------------\n" +
+                                                        "Please, enter number_of_key.\n" +
+                                                        "--------------------------------------------------------------------------------");
+                                                command = "repeat";
                                             }
-                                            System.out.println("--------------------------------------------------------------------------------\n" +
-                                                    "Please, enter number_of_key.\n" +
-                                                    "--------------------------------------------------------------------------------");
-                                            command = "repeat";
                                         } else {
                                             if (userCommand[0].equals("execute_script")) {
                                                 if (userCommand.length == 2){
+                                                    StringBuilder message = new StringBuilder();
+                                                    message.append(userCommand[0]).append(" ").append(userCommand[1]);
                                                     logBuffer = autoLog.getBytes();
                                                     DatagramPacket autoPacket = new DatagramPacket(logBuffer, logBuffer.length, address, servicePort);
                                                     socket.send(autoPacket);
-                                                    buffer = userCommand.toString().getBytes();
+                                                    buffer = message.toString().getBytes();
                                                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, servicePort);
                                                     socket.send(packet);
                                                 } else {
