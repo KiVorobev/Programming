@@ -11,8 +11,6 @@ import org.hibernate.query.Query;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -21,14 +19,6 @@ import java.util.logging.Logger;
 public class DataBase {
     /** Logger */
     static final Logger logger = Logger.getLogger(DataBase.class.getName());
-    /** URL for test connecting */
-    private static String url = "jdbc:postgresql://localhost:XXXX/studs";
-    /** Field for test connecting */
-    private static Connection connection;
-    /** Login for test connecting */
-    private static String username = "*******";
-    /** Password for test connecting */
-    private static String password = "*******";
     /** Session factory for configuration */
     private static SessionFactory factory;
     /** Field for saving date of initialization the collection */
@@ -85,8 +75,6 @@ public class DataBase {
      */
     public void connect(TreeMap<Integer, SpaceMarine> collection) throws SQLException, ClassNotFoundException {
             factory = new Configuration().configure().buildSessionFactory();
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(url, username, password);
             loadCollection(collection);
             initializationDate = java.time.LocalDateTime.now();
             logger.info("Database connection established.");
