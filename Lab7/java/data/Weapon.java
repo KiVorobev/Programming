@@ -1,10 +1,13 @@
 package data;
 
+import javax.persistence.Embeddable;
+
 /**
  * @author Kirill Vorobyev
  * @version 1.0
  * Enum class for describing weapon of element
  */
+@Embeddable
 public enum Weapon {
     BOLTGUN,
     PLASMA_GUN,
