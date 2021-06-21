@@ -8,13 +8,10 @@ import javax.persistence.Embeddable;
  * @version 1.0
  * Class for describing chapter of element
  */
-@Embeddable
 public class Chapter {
     /** field name */
-    @Column(nullable=false)
     private String chapterName; //Field cannot be null, the string cannot be empty
     /** field world */
-    @Column(nullable=false)
     private String chapterWorld; //Field cannot be null
 
     /** Constructor */
