@@ -8,13 +8,10 @@ import javax.persistence.Embeddable;
  * @version 1.0
  * Class for describing coordinates of element
  */
-@Embeddable
 public class Coordinates {
     /** field x */
-    @Column
     private int xCord;
     /** field y */
-    @Column(nullable=false)
     private Integer yCord; //Maximum field value: 941, the field cannot be null
 
     /** Constructor */
