@@ -1,6 +1,5 @@
 package commands;
 
-import data.*;
 import database.HibernateSessionFactoryUtil;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
@@ -8,8 +7,6 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Class of command 'replace_if_greater'
@@ -22,10 +19,10 @@ public class ReplaceIfGreater extends Command {
      * Method for executing this command
      *
      * @param in number of key
-     * @param collection collection
+     *
      * @return - String description of command
      */
-    public String action(String in, TreeMap<Integer,SpaceMarine> collection, String login) {
+    public String action(String in, String login) {
         String message = null;
         try {
             String[] newElement = in.trim().split("\n", 2);
@@ -35,7 +32,6 @@ public class ReplaceIfGreater extends Command {
             SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
             List<SpaceMarines> list = null;
             boolean exists = false;
-            boolean deleted = false;
             try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
                 session.beginTransaction();
 
@@ -51,10 +47,14 @@ public class ReplaceIfGreater extends Command {
                     exists = true;
                     if (spaceMarines.getUser().equals(login)){
                         if (spaceMarines.getHealth() < health) {
-                            spaceMarinesDao.delete(spaceMarines);
-                            spaceMarines.setHealth(health);
-                            spaceMarinesDao.save(spaceMarines);
-                            deleted = true;
+                            try {
+                                spaceMarinesDao.delete(spaceMarines);
+                                spaceMarines.setHealth(health);
+                                spaceMarinesDao.save(spaceMarines);
+                            } catch (Exception exception) {
+                            return "Error occurred while replacing an elements.";
+                        }
+                            message = "Health value updated successfully.";
                         }
                         if (spaceMarines.getHealth() == health) {
                             message = "New value is equal to old.";
@@ -68,18 +68,6 @@ public class ReplaceIfGreater extends Command {
 
             if (!exists) message = "No such key exists.";
 
-            if (deleted) {
-                for (Map.Entry<Integer, SpaceMarine> entry : collection.entrySet()) {
-                    if (key == entry.getKey()) {
-                        SpaceMarine test = entry.getValue();
-                        if (test.getHealth() < health) {
-                            test.setHealth(health);
-                            collection.put(key, test);
-                            message = "Health value updated successfully.";
-                        }
-                    }
-                }
-            }
         } catch (NumberFormatException numberFormatException) {
             message = "Argument must be of type integer. Try again.";
         }
