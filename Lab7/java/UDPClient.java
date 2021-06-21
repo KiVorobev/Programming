@@ -397,7 +397,7 @@ public class UDPClient {
         try {
             byte[] bufferOut = new byte[65535];
             DatagramPacket fromServer = new DatagramPacket(bufferOut, bufferOut.length);
-            socket.setSoTimeout(5000);
+            socket.setSoTimeout(7000);
             socket.receive(fromServer);
             String answer = new String(fromServer.getData(), 0, fromServer.getLength());
             System.out.println("--------------------------------------------------------------------------------\n"
