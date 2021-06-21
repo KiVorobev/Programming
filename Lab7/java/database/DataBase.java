@@ -14,18 +14,22 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
 public class DataBase {
+    /** Logger */
     static final Logger logger = Logger.getLogger(DataBase.class.getName());
-    private static String url = "jdbc:postgresql://localhost:7887/studs";
-    private static Statement statement;
+    /** URL for test connecting */
+    private static String url = "jdbc:postgresql://localhost:XXXX/studs";
+    /** Field for test connecting */
     private static Connection connection;
-    private static String username = "*****";
-    private static String password = "*****";
+    /** Login for test connecting */
+    private static String username = "*******";
+    /** Password for test connecting */
+    private static String password = "*******";
+    /** Session factory for configuration */
     private static SessionFactory factory;
     /** Field for saving date of initialization the collection */
     private static java.time.LocalDateTime initializationDate;
@@ -83,7 +87,6 @@ public class DataBase {
             factory = new Configuration().configure().buildSessionFactory();
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(url, username, password);
-            statement = connection.createStatement();
             loadCollection(collection);
             initializationDate = java.time.LocalDateTime.now();
             logger.info("Database connection established.");
