@@ -6,7 +6,7 @@
 <hibernate-mapping>
 
     <class name="database.SpaceMarines" table="SpaceMarines">
-        <id name="id" column="id"/>
+        <id name="id" column="id"></id>
         <property name="key" column="key"/>
         <property name="user" column="username"/>
         <property name="name" column="name"/>
