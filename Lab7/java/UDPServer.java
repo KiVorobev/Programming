@@ -94,12 +94,7 @@ public class UDPServer {
                         e.printStackTrace();
                     }
                     if (message != null) {
-                        String forLoad = write();
-                        if (forLoad.equals("Element added successfully.") || forLoad.equals("Your collection successfully cleared.")
-                        || forLoad.contains("removed successfully.") || forLoad.equals("Health value updated successfully.")
-                        || forLoad.equals("Element updated successfully.") || forLoad.equals("Your collection successfully cleared.")){
-                            dataBase.loadCollection(spaceMarines);
-                        }
+                        write(dataBase);
                     }
                     if (message.equals("exit")) clientLogin = null;
                 }
@@ -244,21 +239,24 @@ public class UDPServer {
      * @throws IOException          - receiving exception
      * @throws InterruptedException - wait exception
      */
-    public static String write() throws IOException, InterruptedException {
-        String answer = null;
+    public static void write(DataBase dataBase) throws IOException, InterruptedException {
+        final String[] answer = {null};
+        Runnable task = () -> {
             try {
                 if (userCommand.length == 1) {
-                    answer = easyExecution(userCommand[0]);
+                    answer[0] = easyExecution(userCommand[0], dataBase);
                 } else if (userCommand.length == 2) {
-                    answer = hardExecution(userCommand[0], userCommand[1]);
+                    answer[0] = hardExecution(userCommand[0], userCommand[1], dataBase);
                 }
-                    secondBuffer = answer.getBytes();
-                    DatagramPacket toClientPacket = new DatagramPacket(secondBuffer, secondBuffer.length, address, port);
-                    socket.send(toClientPacket);
+                secondBuffer = answer[0].getBytes();
+                DatagramPacket toClientPacket = new DatagramPacket(secondBuffer, secondBuffer.length, address, port);
+                socket.send(toClientPacket);
             } catch (IOException | ExecutionException | InterruptedException ignored) {
                 logger.severe("Sending answer error.");
             }
-            return answer;
+        };
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
 
@@ -267,7 +265,7 @@ public class UDPServer {
      *
      * @return - String description of command
      */
-    public static String easyExecution(String firstArg) throws ExecutionException, InterruptedException {
+    public static String easyExecution(String firstArg, DataBase dataBase) throws ExecutionException, InterruptedException {
             ExecutorService service = Executors.newCachedThreadPool();
             Future<Object> outPut = service.submit(() -> {
             String answer;
@@ -286,7 +284,7 @@ public class UDPServer {
                         answer = new Exit().action(spaceMarines);
                         break;
                     case "clear":
-                        answer = new Clear().action(clientLogin);
+                        answer = new Clear().action(clientLogin, spaceMarines ,dataBase);
                         break;
                     case "group_counting_by_coordinates":
                         answer = new GroupCountingByCoordinates().action(spaceMarines, clientLogin);
@@ -306,34 +304,34 @@ public class UDPServer {
      *
      * @return - String description of command
      */
-    public static String hardExecution(String firstArg, String secondArg) throws ExecutionException, InterruptedException {
+    public static String hardExecution(String firstArg, String secondArg, DataBase dataBase) throws ExecutionException, InterruptedException {
         ExecutorService service = Executors.newCachedThreadPool();
         Future<Object> outPut = service.submit(() -> {
             String answer;
             synchronized (UDPServer.class) {
             switch (firstArg) {
                 case "insert":
-                    answer = new Insert().action(secondArg);
+                    answer = new Insert().action(secondArg, spaceMarines, dataBase);
                     break;
                 case "update":
-                    answer = new Update().action(secondArg, clientLogin);
+                    answer = new Update().action(secondArg, clientLogin, spaceMarines, dataBase);
                     break;
                 case "remove_key":
-                    answer = new RemoveKey().action(secondArg, clientLogin);
+                    answer = new RemoveKey().action(secondArg, clientLogin, spaceMarines, dataBase);
                     break;
                 case "execute_script":
                     DataBase.getPaths().add(secondArg.toLowerCase());
-                    answer = new ExecuteScript().action(secondArg, spaceMarines, clientLogin);
+                    answer = new ExecuteScript().action(secondArg, spaceMarines, clientLogin, dataBase);
                     DataBase.getPaths().clear();
                     break;
                 case "remove_greater":
-                    answer = new RemoveGreater().action(secondArg, spaceMarines, clientLogin);
+                    answer = new RemoveGreater().action(secondArg, spaceMarines, clientLogin, dataBase);
                     break;
                 case "replace_if_greater":
-                    answer = new ReplaceIfGreater().action(secondArg, clientLogin);
+                    answer = new ReplaceIfGreater().action(secondArg, clientLogin, spaceMarines, dataBase);
                     break;
                 case "remove_greater_key":
-                    answer = new RemoveGreaterKey().action(secondArg, spaceMarines, clientLogin);
+                    answer = new RemoveGreaterKey().action(secondArg, spaceMarines, clientLogin, dataBase);
                     break;
                 case "filter_by_chapter":
                     answer = new FilterByChapter().action(secondArg, spaceMarines, clientLogin);
