@@ -1,6 +1,7 @@
 package commands;
 
 import data.*;
+import database.DataBase;
 import database.HibernateSessionFactoryUtil;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
@@ -23,7 +24,7 @@ public class RemoveGreater extends Command implements Comparator<Integer> {
      * @param collection collection
      * @return String description of command
      */
-    public String action(String in, TreeMap<Integer,SpaceMarine> collection, String login) {
+    public String action(String in, TreeMap<Integer,SpaceMarine> collection, String login, DataBase dataBase) {
         String message = null;
         try {
             String test = in;
@@ -57,6 +58,7 @@ public class RemoveGreater extends Command implements Comparator<Integer> {
                         if (spaceMarines.getHealth() > health) {
                             try {
                             spaceMarinesDao.delete(spaceMarines);
+                            dataBase.loadCollection(collection);
                             } catch (Exception exception) {
                                 return "Error occurred while removing an element.";
                             }
