@@ -1,11 +1,15 @@
 package commands;
 
-import data.*;
+import data.AstartesCategory;
+import data.MeleeWeapon;
+import data.Weapon;
+import database.HibernateSessionFactoryUtil;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.List;
 
 /**
  * Class of command 'insert'
@@ -21,11 +25,27 @@ public class Insert extends Command {
      * @param collection collection
      * @return String description of command
      */
-    public String action(String element, TreeMap<Integer,SpaceMarine> collection) {
+    public String action(String element) {
         SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
+        boolean exist = false;
         String[] newElement = element.trim().split("\n", 12);
-        if (!collection.containsKey(Integer.parseInt(newElement[0]))) {
-        Coordinates newCord = new Coordinates(Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]));
+
+        List<SpaceMarines> list = null;
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            Query query = session.createQuery("from SpaceMarines");
+            list = (List<SpaceMarines>) query.list();
+
+            session.getTransaction().commit();
+        } catch (Throwable cause) {
+            cause.printStackTrace();
+        }
+        for (SpaceMarines spaceMarines : list){
+            if (spaceMarines.getKey() == Integer.parseInt(newElement[0])) exist = true;
+        }
+
+        if (!exist) {
         AstartesCategory newCat = null;
         Weapon newWeapon = null;
         MeleeWeapon newMelee = null;
@@ -38,16 +58,16 @@ public class Insert extends Command {
         if (!newElement[8].equals("null")) {
             newMelee = MeleeWeapon.valueOf(newElement[8]);
         }
-        Chapter newChap = new Chapter(newElement[9], newElement[10]);
             int key = Integer.parseInt(newElement[0]);
 
-        SpaceMarines finishSpaceMarines = new SpaceMarines(key,makeId(collection),
+        SpaceMarines finishSpaceMarines = new SpaceMarines(key,makeId(),
                 newElement[1], Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]), newElement[4], Integer.parseInt(newElement[5]), newCat,
                 newWeapon, newMelee, newElement[9], newElement[10], newElement[11]);
-        spaceMarinesDao.save(finishSpaceMarines);
-        SpaceMarine finishSpaceMarine = new SpaceMarine(makeId(collection), newElement[1], newCord, newElement[4],
-                Integer.parseInt(newElement[5]), newCat, newWeapon, newMelee, newChap, newElement[11]);
-            collection.put(key, finishSpaceMarine);
+        try {
+            spaceMarinesDao.save(finishSpaceMarines);
+        } catch (Exception exception) {
+            return "Error occurred while adding an element.";
+            }
             return "Element added successfully.";
         } else {
             return "Such key already exists. Try again.";
@@ -57,15 +77,24 @@ public class Insert extends Command {
     /**
      * Method for receiving ID of element
      *
-     * @param collection collection
      * @return int ID
      */
-    public int makeId(TreeMap<Integer,SpaceMarine> collection) {
+    public int makeId() {
+
         int maxId = 0;
-        for (Map.Entry<Integer, SpaceMarine> marines : collection.entrySet()) {
-            if (marines.getValue().getId() > maxId) {
-                maxId = marines.getValue().getId();
-            }
+        List<SpaceMarines> list = null;
+        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+
+            Query query = session.createQuery("from SpaceMarines");
+            list = (List<SpaceMarines>) query.list();
+
+            session.getTransaction().commit();
+        } catch (Throwable cause) {
+            cause.printStackTrace();
+        }
+        for (SpaceMarines spaceMarines : list) {
+            if (spaceMarines.getId() > maxId) maxId = spaceMarines.getId();
         }
         return maxId + 1;
     }
