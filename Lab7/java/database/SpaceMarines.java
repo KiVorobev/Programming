@@ -10,58 +10,73 @@ public class SpaceMarines {
     /**
      * field key of this element
      */
+    @Column(name = "key", nullable = false, unique = true)
     private int key;
     /**
      * Field ID
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", unique = true, nullable = false)
     private int id; //The value of the field must be greater than 0, and the value of this field must be unique
     //The value of this field should be generated automatically
     /**
      * Field name
      */
-
+    @Column(name = "name", nullable = false)
     private String name; //Field cannot be null, the string cannot be empty
     /**
      * field x
      */
+    @Column(name = "x_coordinate", nullable = false)
     private int xCord;
     /**
      * field y
      */
+    @Column(name = "y_coordinate", nullable = false)
     private Integer yCord; //Maximum field value: 941, the field cannot be null
     /**
      * Field creation date
      */
+    @Column(name = "creation_date", nullable = false)
     private String creationDate; //Field cannot be null, the value of this field should be generated automatically
     /**
      * Field health
      */
+    @Column(name = "health")
     private Integer health; //Field can be null, the field value must be greater than 0
     /**
      * Field category
      */
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private AstartesCategory category; //Field can be null
     /**
      * Field weapon type
      */
+    @Column(name = "weapon_type")
+    @Enumerated(EnumType.STRING)
     private Weapon weaponType; //Field can be null
     /**
      * Field melee weapon
      */
+    @Column (name = "melee_weapon")
+    @Enumerated(EnumType.STRING)
     private MeleeWeapon meleeWeapon; //Field can be null
     /**
      * field name of chapter
      */
+    @Column(name = "name_of_chapter", nullable = false)
     private String chapterName; //Field cannot be null, the string cannot be empty
     /**
      * field world of chapter
      */
+    @Column(name = "world_of_chapter", nullable = false)
     private String chapterWorld; //Field cannot be null
     /**
      * field host user
      */
+    @Column(name = "username", nullable = false)
     private String user;
 
 
