@@ -55,7 +55,11 @@ public class RemoveGreaterKey extends Command {
                 if (spaceMarines.getUser().equals(login)) {
                     exists = true;
                     if (spaceMarines.getKey() > key) {
-                        spaceMarinesDao.delete(spaceMarines);
+                        try {
+                            spaceMarinesDao.delete(spaceMarines);
+                        } catch (Exception exception) {
+                        return "Error occurred while removing an element.";
+                    }
                         deleted = true;
                     }
                 }
