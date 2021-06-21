@@ -1,6 +1,7 @@
 package commands;
 
 import data.*;
+import database.DataBase;
 import database.HibernateSessionFactoryUtil;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
@@ -9,6 +10,7 @@ import org.hibernate.query.Query;
 
 import javax.persistence.PersistenceException;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Class of command 'update'
@@ -23,7 +25,7 @@ public class Update extends Command {
      * @param element number of id
      * @return String description of command
      */
-    public String action(String element, String login) throws PersistenceException {
+    public String action(String element, String login, TreeMap<Integer, SpaceMarine> collection, DataBase dataBase) throws PersistenceException {
         String message = null;
         try {
             String[] newElement = element.trim().split("\n", 12);
@@ -68,6 +70,7 @@ public class Update extends Command {
                         try {
                         spaceMarinesDao.delete(spaceMarines);
                         spaceMarinesDao.save(newSpaceMarine);
+                        dataBase.loadCollection(collection);
                         } catch (Exception exception) {
                             return "Error occurred while updating an element.";
                         }
