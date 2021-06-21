@@ -1,10 +1,13 @@
 package commands;
 
+import data.SpaceMarine;
+import database.DataBase;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Class of command 'clear'
@@ -18,7 +21,7 @@ public class Clear extends Command {
      *
      * @return String description of command
      */
-    public String action(String login) {
+    public String action(String login, TreeMap<Integer, SpaceMarine> collection, DataBase dataBase) {
         boolean wasDeleted = false;
         String message;
         SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
@@ -29,6 +32,7 @@ public class Clear extends Command {
                 if (spaceMarine.getUser().equals(login)) {
                     try {
                         spaceMarinesDao.delete(spaceMarine);
+                        dataBase.loadCollection(collection);
                     } catch (Exception exception) {
                         return "Error occurred while removing an element.";
                     }
