@@ -24,8 +24,8 @@ public class DataBase {
     private static String url = "jdbc:postgresql://localhost:7887/studs";
     private static Statement statement;
     private static Connection connection;
-    private static String username = "s312439";
-    private static String password = "gel443";
+    private static String username = "*****";
+    private static String password = "*****";
     private static SessionFactory factory;
     /** Field for saving date of initialization the collection */
     private static java.time.LocalDateTime initializationDate;
@@ -87,19 +87,6 @@ public class DataBase {
             loadCollection(collection);
             initializationDate = java.time.LocalDateTime.now();
             logger.info("Database connection established.");
-    }
-
-    /**
-     * Disconnecting with database
-     */
-    public static void disconnect(){
-        try {
-            statement.close();
-            connection.close();
-            logger.info("Database has been disconnected.");
-        } catch (SQLException sqlException) {
-            logger.severe("Something went wrong...");
-        }
     }
 
     /**
