@@ -12,6 +12,10 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.*;
 
 /**
@@ -64,6 +68,8 @@ public class UDPServer {
      * Field for check the user's authorisation status
      */
     private static boolean isAuthorisated;
+    private static ExecutorService readingPool = Executors.newFixedThreadPool(10);
+    private static ExecutorService processingPool = Executors.newCachedThreadPool();
 
     /**
      * Server entry point
@@ -81,12 +87,18 @@ public class UDPServer {
                 socket = new DatagramSocket(servicePort);
                 authorisation();
                 if (isAuthorisated) {
-                    String message = read();
+                    Future<String> readerResult = readingPool.submit(() -> read());
+                    String message = null;
+                    try {
+                        message = readerResult.get();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
                     if (message != null) {
                         String forLoad = write();
                         if (forLoad.equals("Element added successfully.") || forLoad.equals("Your collection successfully cleared.")
                         || forLoad.contains("removed successfully.") || forLoad.equals("Health value updated successfully.")
-                        || forLoad.equals("Element updated successfully.")){
+                        || forLoad.equals("Element updated successfully.") || forLoad.equals("Your collection successfully cleared.")){
                             dataBase.loadCollection(spaceMarines);
                         }
                     }
@@ -259,31 +271,33 @@ public class UDPServer {
      * @return - String description of command
      */
     public static String easyExecution(String firstArg) {
-        String answer;
-        switch (firstArg) {
-            case "help":
-                answer = new Help().action(new DataBase());
-                break;
-            case "info":
-                answer = new Info().action(spaceMarines, clientLogin);
-                break;
-            case "show":
-                answer = new Show().action(spaceMarines);
-                break;
-            case "exit":
-                answer = new Exit().action(spaceMarines);
-                break;
-            case "clear":
-                answer = new Clear().action(spaceMarines, clientLogin);
-                break;
-            case "group_counting_by_coordinates":
-                answer = new GroupCountingByCoordinates().action(spaceMarines, clientLogin);
-                break;
-            default:
-                answer = "Unknown command. Write 'help' for reference.";
-                break;
+        synchronized (UDPServer.class) {
+            String answer;
+            switch (firstArg) {
+                case "help":
+                    answer = new Help().action(new DataBase());
+                    break;
+                case "info":
+                    answer = new Info().action(spaceMarines, clientLogin);
+                    break;
+                case "show":
+                    answer = new Show().action(spaceMarines);
+                    break;
+                case "exit":
+                    answer = new Exit().action(spaceMarines);
+                    break;
+                case "clear":
+                    answer = new Clear().action(clientLogin);
+                    break;
+                case "group_counting_by_coordinates":
+                    answer = new GroupCountingByCoordinates().action(spaceMarines, clientLogin);
+                    break;
+                default:
+                    answer = "Unknown command. Write 'help' for reference.";
+                    break;
+            }
+            return answer;
         }
-        return answer;
     }
 
     /**
@@ -292,42 +306,44 @@ public class UDPServer {
      * @return - String description of command
      */
     public static String hardExecution(String firstArg, String secondArg) {
-        String answer;
-        switch (firstArg) {
-            case "insert":
-                answer = new Insert().action(secondArg, spaceMarines);
-                break;
-            case "update":
-                answer = new Update().action(secondArg, spaceMarines, clientLogin);
-                break;
-            case "remove_key":
-                answer = new RemoveKey().action(secondArg, spaceMarines, clientLogin);
-                break;
-            case "execute_script":
-                DataBase.getPaths().add(secondArg.toLowerCase());
-                answer = new ExecuteScript().action(secondArg, spaceMarines, clientLogin);
-                DataBase.getPaths().clear();
-                break;
-            case "remove_greater":
-                answer = new RemoveGreater().action(secondArg, spaceMarines, clientLogin);
-                break;
-            case "replace_if_greater":
-                answer = new ReplaceIfGreater().action(secondArg, spaceMarines, clientLogin);
-                break;
-            case "remove_greater_key":
-                answer = new RemoveGreaterKey().action(secondArg, spaceMarines, clientLogin);
-                break;
-            case "filter_by_chapter":
-                answer = new FilterByChapter().action(secondArg, spaceMarines, clientLogin);
-                break;
-            case "filter_starts_with_name":
-                answer = new FilterStartsWithName().action(secondArg, spaceMarines, clientLogin);
-                break;
-            default:
-                answer = "Unknown command. Write 'help' for reference.";
-                break;
+        synchronized (UDPServer.class) {
+            String answer;
+            switch (firstArg) {
+                case "insert":
+                    answer = new Insert().action(secondArg);
+                    break;
+                case "update":
+                    answer = new Update().action(secondArg, clientLogin);
+                    break;
+                case "remove_key":
+                    answer = new RemoveKey().action(secondArg, clientLogin);
+                    break;
+                case "execute_script":
+                    DataBase.getPaths().add(secondArg.toLowerCase());
+                    answer = new ExecuteScript().action(secondArg, spaceMarines, clientLogin);
+                    DataBase.getPaths().clear();
+                    break;
+                case "remove_greater":
+                    answer = new RemoveGreater().action(secondArg, spaceMarines, clientLogin);
+                    break;
+                case "replace_if_greater":
+                    answer = new ReplaceIfGreater().action(secondArg, clientLogin);
+                    break;
+                case "remove_greater_key":
+                    answer = new RemoveGreaterKey().action(secondArg, spaceMarines, clientLogin);
+                    break;
+                case "filter_by_chapter":
+                    answer = new FilterByChapter().action(secondArg, spaceMarines, clientLogin);
+                    break;
+                case "filter_starts_with_name":
+                    answer = new FilterStartsWithName().action(secondArg, spaceMarines, clientLogin);
+                    break;
+                default:
+                    answer = "Unknown command. Write 'help' for reference.";
+                    break;
+            }
+            return answer;
         }
-        return answer;
     }
     public TreeMap<Integer, SpaceMarine> getSpaceMarines() {
         return spaceMarines;
