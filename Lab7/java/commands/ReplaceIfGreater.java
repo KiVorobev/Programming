@@ -1,5 +1,7 @@
 package commands;
 
+import data.SpaceMarine;
+import database.DataBase;
 import database.HibernateSessionFactoryUtil;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
@@ -7,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Class of command 'replace_if_greater'
@@ -22,7 +25,7 @@ public class ReplaceIfGreater extends Command {
      *
      * @return - String description of command
      */
-    public String action(String in, String login) {
+    public String action(String in, String login, TreeMap<Integer, SpaceMarine> collection, DataBase dataBase) {
         String message = null;
         try {
             String[] newElement = in.trim().split("\n", 2);
@@ -51,6 +54,7 @@ public class ReplaceIfGreater extends Command {
                                 spaceMarinesDao.delete(spaceMarines);
                                 spaceMarines.setHealth(health);
                                 spaceMarinesDao.save(spaceMarines);
+                                dataBase.loadCollection(collection);
                             } catch (Exception exception) {
                             return "Error occurred while replacing an elements.";
                         }
