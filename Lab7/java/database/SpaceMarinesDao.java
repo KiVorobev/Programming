@@ -23,11 +23,11 @@ public class SpaceMarinesDao {
     }
 
     public void save(SpaceMarines spaceMarines) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction tx1 = session.beginTransaction();
-        session.save(spaceMarines);
-        tx1.commit();
-        session.close();
+            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+            Transaction tx1 = session.beginTransaction();
+            session.save(spaceMarines);
+            tx1.commit();
+            session.close();
     }
 
     public void delete(SpaceMarines spaceMarines) {
