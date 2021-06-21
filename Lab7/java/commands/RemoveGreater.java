@@ -55,7 +55,11 @@ public class RemoveGreater extends Command implements Comparator<Integer> {
                     if (spaceMarines.getUser().equals(login)) {
                         exists = true;
                         if (spaceMarines.getHealth() > health) {
+                            try {
                             spaceMarinesDao.delete(spaceMarines);
+                            } catch (Exception exception) {
+                                return "Error occurred while removing an element.";
+                            }
                             deleted = true;
                         }
                     }
