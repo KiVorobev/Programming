@@ -1,6 +1,7 @@
 package commands;
 
 import data.*;
+import database.DataBase;
 import database.HibernateSessionFactoryUtil;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
@@ -21,9 +22,12 @@ public class RemoveGreaterKey extends Command {
      *
      * @param in number of key
      * @param collection collection
+     * @param login user's login
+     * @param dataBase data base
+     *
      * @return String description of command
      */
-    public String action(String in, TreeMap<Integer,SpaceMarine> collection, String login) {
+    public String action(String in, TreeMap<Integer,SpaceMarine> collection, String login, DataBase dataBase) {
         String message = null;
         try {
             String test = in;
@@ -57,6 +61,7 @@ public class RemoveGreaterKey extends Command {
                     if (spaceMarines.getKey() > key) {
                         try {
                             spaceMarinesDao.delete(spaceMarines);
+                            dataBase.loadCollection(collection);
                         } catch (Exception exception) {
                         return "Error occurred while removing an element.";
                     }
