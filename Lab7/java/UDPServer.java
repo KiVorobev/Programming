@@ -68,14 +68,13 @@ public class UDPServer {
      * Field for check the user's authorisation status
      */
     private static boolean isAuthorisated;
-    private static ExecutorService readingPool = Executors.newFixedThreadPool(10);
-    private static ExecutorService processingPool = Executors.newCachedThreadPool();
 
     /**
      * Server entry point
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         try {
+            ExecutorService readingPool = Executors.newFixedThreadPool(10);
             DataBase dataBase = new DataBase();
             settingOfLogging();
             socket = new DatagramSocket(servicePort);
@@ -246,11 +245,8 @@ public class UDPServer {
      * @throws InterruptedException - wait exception
      */
     public static String write() throws IOException, InterruptedException {
-            String answer = " ";
+        String answer = null;
             try {
-                if (userCommand.length == 3) {
-                    answer = " ";
-                }
                 if (userCommand.length == 1) {
                     answer = easyExecution(userCommand[0]);
                 } else if (userCommand.length == 2) {
@@ -259,45 +255,50 @@ public class UDPServer {
                     secondBuffer = answer.getBytes();
                     DatagramPacket toClientPacket = new DatagramPacket(secondBuffer, secondBuffer.length, address, port);
                     socket.send(toClientPacket);
-            } catch (IOException ignored) {
+            } catch (IOException | ExecutionException | InterruptedException ignored) {
                 logger.severe("Sending answer error.");
             }
             return answer;
     }
+
 
     /**
      * Module for execution of commands without argument
      *
      * @return - String description of command
      */
-    public static String easyExecution(String firstArg) {
-        synchronized (UDPServer.class) {
+    public static String easyExecution(String firstArg) throws ExecutionException, InterruptedException {
+            ExecutorService service = Executors.newCachedThreadPool();
+            Future<Object> outPut = service.submit(() -> {
             String answer;
-            switch (firstArg) {
-                case "help":
-                    answer = new Help().action(new DataBase());
-                    break;
-                case "info":
-                    answer = new Info().action(spaceMarines, clientLogin);
-                    break;
-                case "show":
-                    answer = new Show().action(spaceMarines);
-                    break;
-                case "exit":
-                    answer = new Exit().action(spaceMarines);
-                    break;
-                case "clear":
-                    answer = new Clear().action(clientLogin);
-                    break;
-                case "group_counting_by_coordinates":
-                    answer = new GroupCountingByCoordinates().action(spaceMarines, clientLogin);
-                    break;
-                default:
-                    answer = "Unknown command. Write 'help' for reference.";
-                    break;
+            synchronized (UDPServer.class) {
+                switch (firstArg) {
+                    case "help":
+                        answer = new Help().action(new DataBase());
+                        break;
+                    case "info":
+                        answer = new Info().action(spaceMarines, clientLogin);
+                        break;
+                    case "show":
+                        answer = new Show().action(spaceMarines);
+                        break;
+                    case "exit":
+                        answer = new Exit().action(spaceMarines);
+                        break;
+                    case "clear":
+                        answer = new Clear().action(clientLogin);
+                        break;
+                    case "group_counting_by_coordinates":
+                        answer = new GroupCountingByCoordinates().action(spaceMarines, clientLogin);
+                        break;
+                    default:
+                        answer = "Unknown command. Write 'help' for reference.";
+                        break;
+                }
             }
             return answer;
-        }
+        });
+        return (String) outPut.get();
     }
 
     /**
@@ -305,9 +306,11 @@ public class UDPServer {
      *
      * @return - String description of command
      */
-    public static String hardExecution(String firstArg, String secondArg) {
-        synchronized (UDPServer.class) {
+    public static String hardExecution(String firstArg, String secondArg) throws ExecutionException, InterruptedException {
+        ExecutorService service = Executors.newCachedThreadPool();
+        Future<Object> outPut = service.submit(() -> {
             String answer;
+            synchronized (UDPServer.class) {
             switch (firstArg) {
                 case "insert":
                     answer = new Insert().action(secondArg);
@@ -342,9 +345,12 @@ public class UDPServer {
                     answer = "Unknown command. Write 'help' for reference.";
                     break;
             }
+            }
             return answer;
-        }
+        });
+        return (String) outPut.get();
     }
+
     public TreeMap<Integer, SpaceMarine> getSpaceMarines() {
         return spaceMarines;
     }
