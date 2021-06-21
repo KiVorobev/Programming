@@ -2,7 +2,9 @@ package commands;
 
 import data.AstartesCategory;
 import data.MeleeWeapon;
+import data.SpaceMarine;
 import data.Weapon;
+import database.DataBase;
 import database.HibernateSessionFactoryUtil;
 import database.SpaceMarines;
 import database.SpaceMarinesDao;
@@ -10,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Class of command 'insert'
@@ -23,9 +26,11 @@ public class Insert extends Command {
      *
      * @param element SpaceMarine element
      * @param collection collection
+     * @param dataBase data base
+     *
      * @return String description of command
      */
-    public String action(String element) {
+    public String action(String element, TreeMap<Integer, SpaceMarine> collection, DataBase dataBase) {
         SpaceMarinesDao spaceMarinesDao = new SpaceMarinesDao();
         boolean exist = false;
         String[] newElement = element.trim().split("\n", 12);
@@ -65,6 +70,7 @@ public class Insert extends Command {
                 newWeapon, newMelee, newElement[9], newElement[10], newElement[11]);
         try {
             spaceMarinesDao.save(finishSpaceMarines);
+            dataBase.loadCollection(collection);
         } catch (Exception exception) {
             return "Error occurred while adding an element.";
             }
