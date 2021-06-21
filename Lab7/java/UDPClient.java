@@ -32,7 +32,13 @@ public class UDPClient {
      * Field for storing the IP-address
      */
     private static InetAddress address;
+    /**
+     * Field for storing the login of user
+     */
     private static String clientLogin;
+    /**
+     * Field for storing the password of user
+     */
     private static String clientPassword;
 
     /**
@@ -77,7 +83,9 @@ public class UDPClient {
      * Module for sending requests to the server
      *
      * @return String - entered command
+     *
      * @throws IOException receiving exception
+     * @throws InterruptedException exception of interrupted
      */
     public static String write() throws IOException, InterruptedException {
         Scanner scanner = new Scanner(System.in);
@@ -409,7 +417,7 @@ public class UDPClient {
         while (true){
             try {
                 Scanner scanner = new Scanner(System.in);
-                System.out.println("1 - Sign in || 2 - Sign up");
+                System.out.println("1 - Sign in || 2 - Sign up || 3 - Exit");
                 System.out.print("Enter a command: ");
                 String message = scanner.nextLine();
                 String login = "";
@@ -417,8 +425,12 @@ public class UDPClient {
                 boolean needToRelog = true;
                 boolean needToRepas = true;
                 StringBuilder credentials = new StringBuilder();
-                if (message.equals("1") || message.equals("Sign in") || message.equals("2") || message.equals("Sign up")){
-                    if (message.equals("1") || message.equals("Sign up")){
+                if (message.equals("3") || message.equals("Exit")){
+                    System.out.println("Program will be finished now. See you again:)");
+                    System.exit(0);
+                } else
+                if (message.equals("1") || message.equals("Sign in") || message.equals("2") || message.equals("Sign up")) {
+                    if (message.equals("1") || message.equals("Sign up")) {
                         credentials.append("1").append(" ");
                     } else credentials.append("2").append(" ");
                     while (needToRelog) {
@@ -477,7 +489,7 @@ public class UDPClient {
                     socket.send(packet);
                     String messageFromServer = read();
                     if (messageFromServer.equals("You have successfully log in.") ||
-                            messageFromServer.equals("You have successfully registered.")){
+                            messageFromServer.equals("You have successfully registered.")) {
                         clientLogin = login;
                         clientPassword = password;
                         break;
