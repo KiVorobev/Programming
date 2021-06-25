@@ -65,7 +65,7 @@ public class Insert extends Command {
         }
             int key = Integer.parseInt(newElement[0]);
 
-        SpaceMarines finishSpaceMarines = new SpaceMarines(key,makeId(),
+        SpaceMarines finishSpaceMarines = new SpaceMarines(key, 0,
                 newElement[1], Integer.parseInt(newElement[2]), Integer.parseInt(newElement[3]), newElement[4], Integer.parseInt(newElement[5]), newCat,
                 newWeapon, newMelee, newElement[9], newElement[10], newElement[11]);
         try {
@@ -78,30 +78,5 @@ public class Insert extends Command {
         } else {
             return "Such key already exists. Try again.";
         }
-    }
-
-    /**
-     * Method for receiving ID of element
-     *
-     * @return int ID
-     */
-    public int makeId() {
-
-        int maxId = 0;
-        List<SpaceMarines> list = null;
-        try (Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
-            session.beginTransaction();
-
-            Query query = session.createQuery("from SpaceMarines");
-            list = (List<SpaceMarines>) query.list();
-
-            session.getTransaction().commit();
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-        }
-        for (SpaceMarines spaceMarines : list) {
-            if (spaceMarines.getId() > maxId) maxId = spaceMarines.getId();
-        }
-        return maxId + 1;
     }
 }
