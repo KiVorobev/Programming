@@ -17,7 +17,6 @@ public class Exit extends Command {
      * @return String phrase for close client
      */
     public String action(TreeMap<Integer,SpaceMarine> collection){
-        collection.clear();
         return "Program will be finished now. See you again:)";
     }
 }
