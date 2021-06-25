@@ -4,12 +4,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table (name = "users")
 public class User {
     private String login;
     private String password;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SpaceMarines> spaceMarines;
     public User() {
     }
@@ -32,8 +29,6 @@ public class User {
         this.spaceMarines = spaceMarines;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public String getLogin() {
         return login;
     }
