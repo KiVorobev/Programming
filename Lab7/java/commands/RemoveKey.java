@@ -61,7 +61,7 @@ public class RemoveKey extends Command {
                         } catch (Exception exception) {
                             return "Error occurred while removing an element.";
                         }
-                        message = "Element removed successfully.";
+                        return "Element removed successfully.";
                     } else message = "You don't have permission to access this element.";
                 }
             }
