@@ -68,33 +68,7 @@ public class RemoveGreater extends Command implements Comparator<Integer> {
                 }
                 if (!exists)  message = "Your collection is empty.";
                 if (exists && !deleted) message = "There are no elements in the collection that greater the specified one.";
-                if (deleted) {
-                    int counter = 0;
-                    boolean check = false;
-                    Set<Integer> keys = new HashSet<>();
-                    for (Map.Entry<Integer, SpaceMarine> entry : collection.entrySet()) {
-                        SpaceMarine test2 = entry.getValue();
-                        if (compare(health, test2.getHealth()) > 0 && entry.getValue().getUser().equals(login)) {
-                            keys.add(entry.getKey());
-                            check = true;
-                        }
-                    }
-                    if (check) {
-                        for (Integer last : keys) {
-                            counter += 1;
-                            collection.remove(last);
-                        }
-                    }
-                    if (counter == 0) {
-                        message = "There are no elements in the collection that greater the specified one.";
-                    }
-                    if (counter == 1) {
-                        message = "1 element removed successfully.";
-                    }
-                    if (counter > 1) {
-                        message = counter + " elements removed successfully.";
-                    }
-                }
+                if (deleted) message = "Element(s) removed successfully.";
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
             message = "Argument must be of type integer. Try again.";
         }
